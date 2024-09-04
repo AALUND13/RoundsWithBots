@@ -11,6 +11,8 @@
 *.sln.docstates
 *.dll
 *.zip
+# Add Template User Files
+!*.template.*.user
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

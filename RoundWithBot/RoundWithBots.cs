@@ -1,29 +1,19 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using HarmonyLib.Tools;
 using System.Collections;
 using System.Collections.Generic;
-using ModdingUtils;
-using ModdingUtils.Extensions;
 using TMPro;
-using RWF.UI;
-using Photon.Realtime;
 using UnityEngine;
-using BepInEx.Configuration;
 
-namespace RoundWithBot
-{
-    // These are the mods required for our mod to work
-    [BepInDependency("com.willis.rounds.unbound", BepInDependency.DependencyFlags.HardDependency)]
-    [BepInDependency("pykess.rounds.plugins.moddingutils", BepInDependency.DependencyFlags.HardDependency)]
-    [BepInDependency("root.rarity.lib", BepInDependency.DependencyFlags.HardDependency)]
-    [BepInDependency("pykess.rounds.plugins.cardchoicespawnuniquecardpatch", BepInDependency.DependencyFlags.HardDependency)]
+namespace RoundWithBot {
+    [BepInDependency("dev.rounds.unbound.core", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("dev.rounds.unbound.cards", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("dev.rounds.unbound.gamemodes", BepInDependency.DependencyFlags.HardDependency)]
     //[BepInDependency("io.olavim.rounds.rwf", BepInDependency.DependencyFlags.HardDependency)]
-    // Declares our mod to Bepin
     [BepInPlugin(ModId, ModName, Version)]
-    // The game our mod is associated with
     [BepInProcess("Rounds.exe")]
-    public class RoundWithBots : BaseUnityPlugin
-    {
+    public class RoundWithBots : BaseUnityPlugin {
         private const string ModId = "com.aalund13.rounds.round_with_bot";
         private const string ModName = "Round With Bot";
         public const string Version = "2.3.0"; // What version are we on (major.minor.patch)?
@@ -34,38 +24,54 @@ namespace RoundWithBot
         public bool isPicking = false;
         private List<int> botPlayer = new List<int>();
 
-        
+        private IEnumerator CheckExcludedCards() {
+            yield return new WaitForSeconds(2); // Wait for 1 second before starting the test
 
-        void Awake()
-        {
+            bool foundExcludedCard = false;
+
+            for(int i = 0; i < 50; i++) {
+                CardInfo card = (AccessTools.Method(typeof(CardChoice), "GetRandomCard").Invoke(CardChoice.instance, null) as GameObject).GetComponent<CardInfo>() as CardInfo;
+                if(RWB.RoundWithBot.IsAExcludeCard(card)) {
+                    UnityEngine.Debug.LogError("[TEST FAILED] Got a excluded card");
+                    foundExcludedCard = true;
+                    yield break; // Exit the coroutine if an excluded card is found
+                }
+                yield return null; // Wait for the next frame
+            }
+
+            if(!foundExcludedCard) UnityEngine.Debug.Log("[TEST PASSED] No excluded cards found");
+
+            yield break; // Exit the coroutine if no excluded cards are found
+        }
+
+        void Awake() {
             // Use this to call any harmony patch files your mod may have
-            try
-            {
+            try {
                 var harmony = new Harmony(ModId);
                 harmony.PatchAll();
             } catch { }
         }
-        void Start()
-        {
+        void Start() {
             instance = this;
-            
+
             ConfigHandler.RegesterMenu(ModName, Config);
 
-            NoBot = CardChoiceSpawnUniqueCardPatch.CustomCategories.CustomCardCategories.instance.CardCategory("not-for-bots");
             RWB.RoundWithBot.AddExcludeCard("Remote");
-            
-            UnboundLib.GameModes.GameModeManager.AddHook(UnboundLib.GameModes.GameModeHooks.HookPlayerPickStart,(_)=> BotPicks());
-            UnboundLib.GameModes.GameModeManager.AddHook(UnboundLib.GameModes.GameModeHooks.HookGameStart,(_)=> RegesterBots());
-            
+
+            // Test function see it get remote
+            this.StartCoroutine(CheckExcludedCards());
+
+            Unbound.Gamemodes.GameModeManager.AddHook(Unbound.Gamemodes.GameModeHooks.HookPlayerPickStart, (_) => BotPicks());
+            Unbound.Gamemodes.GameModeManager.AddHook(Unbound.Gamemodes.GameModeHooks.HookGameStart, (_) => RegesterBots());
+
         }
-        
+
         IEnumerator RegesterBots() {
             botPlayer.Clear();
             for(int i = 0; i < PlayerManager.instance.players.Count; i++) {
                 Player player = PlayerManager.instance.players[i];
                 if(player.GetComponent<PlayerAPI>().enabled) {
                     botPlayer.Add(player.playerID);
-                    player.data.stats.GetAdditionalData().blacklistedCategories.Add(NoBot);
                     player.GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>().text = "<#07e0f0>[BOT]";
                 }
             }
@@ -74,7 +80,7 @@ namespace RoundWithBot
         }
         IEnumerator BotPicks() {
             StartCoroutine(RWB.RoundWithBot.AiPickCard());
-            
+
             yield break;
         }
     }
