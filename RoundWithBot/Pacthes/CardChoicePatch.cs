@@ -35,7 +35,7 @@ namespace RoundWithBot.Patches.RWF {
 
         [HarmonyPatch("GetRandomCard")]
         [HarmonyPostfix]
-        private static void IngoreExcludedCards(ref GameObject __result) {
+        private static void IgnoreExcludedCards(ref GameObject __result) {
             if(GetSpawnabeCards().Count != 0 && RWB.RoundWithBot.IsAExcludeCard(__result)) {
                 GameObject card = (GameObject)AccessTools.Method(typeof(CardChoice), "GetRandomCard").Invoke(CardChoice.instance, null);
                 __result = card;
