@@ -3,40 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using HarmonyLib;
+using Unbound.Cards.Utils;
+using Unbound.Core;
 using UnityEngine;
 
 namespace RoundWithBot.Patches.RWF {
-    [HarmonyPatch(typeof(CardChoice), "GetRandomCard")]
+    public static class SpawnedCardsHolder {
+        public static List<CardInfo> spawnedCards = new List<CardInfo>();
+    }
+
+    [HarmonyPatch(typeof(CardChoice))]
     public static class CardChoicePatch {
-        [HarmonyPriority(Priority.Last)]
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator ilGenerator, IEnumerable<CodeInstruction> instructions) {
-            var isAExcludeCardMethod = AccessTools.Method(typeof(RWB.RoundWithBot), "IsAExcludeCard", new Type[] { typeof(GameObject) });
-            var getRandomCardMethod = AccessTools.Method(typeof(CardChoice), "GetRandomCard");
+        private static List<CardInfo> GetSpawnabeCards() {
+            List<CardInfo> enableCards = CardChoice.instance.cards.ToList();
+            List<CardInfo> spawnabeCards = enableCards.Except(SpawnedCardsHolder.spawnedCards).Except(RWB.RoundWithBot.excludeCards).ToList();
+            return spawnabeCards;
+        }
 
-            var instructionsList = instructions.ToList();
-            var skipLabel = ilGenerator.DefineLabel();
 
-            for(int i = 0; i < instructionsList.Count; i++) {
-                var code = instructionsList[i];
-                var forward = i + 1 < instructionsList.Count ? instructionsList[i + 1] : null;
+        [HarmonyPatch("SpawnUniqueCard")]
+        [HarmonyPostfix]
+        private static void AddSpawnedCard(GameObject __result) {
+            SpawnedCardsHolder.spawnedCards.Add(__result.GetComponent<CardInfo>().sourceCard);
+        }
 
-                if(code.opcode == OpCodes.Ldloc_0 && forward != null && forward.opcode == OpCodes.Ret) {
-                    yield return new CodeInstruction(OpCodes.Ldloc_0); // Load the original card
-                    yield return new CodeInstruction(OpCodes.Call, isAExcludeCardMethod); // Call IsAExcludeCard
-                    yield return new CodeInstruction(OpCodes.Brfalse_S, skipLabel); // If not excluded, skip the replacement
+        [HarmonyPatch("IDoEndPick")]
+        [HarmonyPrefix]
+        private static void ClearSpawnedCards() {
+            SpawnedCardsHolder.spawnedCards.Clear();
+        }
 
-                    yield return new CodeInstruction(OpCodes.Ldarg_0); // Load the CardChoice instance (this)
-                    yield return new CodeInstruction(OpCodes.Call, getRandomCardMethod); // Recalculate the random card using instance method
-                    yield return new CodeInstruction(OpCodes.Stloc_0); // Store the recalculated card in the local variable 0
-                    yield return new CodeInstruction(OpCodes.Br_S, skipLabel);
-
-                    yield return new CodeInstruction(OpCodes.Nop).WithLabels(skipLabel);
-                } else {
-                    yield return code;
-                }
+        [HarmonyPatch("GetRandomCard")]
+        [HarmonyPostfix]
+        private static void IngoreExcludedCards(ref GameObject __result) {
+            if(GetSpawnabeCards().Count != 0 && RWB.RoundWithBot.IsAExcludeCard(__result)) {
+                GameObject card = (GameObject)AccessTools.Method(typeof(CardChoice), "GetRandomCard").Invoke(CardChoice.instance, null);
+                __result = card;
             }
-
-            UnityEngine.Debug.Log("Patched GetRandomCard");
         }
     }
 }

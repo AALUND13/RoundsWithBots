@@ -24,26 +24,6 @@ namespace RoundWithBot {
         public bool isPicking = false;
         private List<int> botPlayer = new List<int>();
 
-        private IEnumerator CheckExcludedCards() {
-            yield return new WaitForSeconds(2); // Wait for 1 second before starting the test
-
-            bool foundExcludedCard = false;
-
-            for(int i = 0; i < 50; i++) {
-                CardInfo card = (AccessTools.Method(typeof(CardChoice), "GetRandomCard").Invoke(CardChoice.instance, null) as GameObject).GetComponent<CardInfo>() as CardInfo;
-                if(RWB.RoundWithBot.IsAExcludeCard(card)) {
-                    UnityEngine.Debug.LogError("[TEST FAILED] Got a excluded card");
-                    foundExcludedCard = true;
-                    yield break; // Exit the coroutine if an excluded card is found
-                }
-                yield return null; // Wait for the next frame
-            }
-
-            if(!foundExcludedCard) UnityEngine.Debug.Log("[TEST PASSED] No excluded cards found");
-
-            yield break; // Exit the coroutine if no excluded cards are found
-        }
-
         void Awake() {
             // Use this to call any harmony patch files your mod may have
             try {
@@ -57,9 +37,6 @@ namespace RoundWithBot {
             ConfigHandler.RegesterMenu(ModName, Config);
 
             RWB.RoundWithBot.AddExcludeCard("Remote");
-
-            // Test function see it get remote
-            this.StartCoroutine(CheckExcludedCards());
 
             Unbound.Gamemodes.GameModeManager.AddHook(Unbound.Gamemodes.GameModeHooks.HookPlayerPickStart, (_) => BotPicks());
             Unbound.Gamemodes.GameModeManager.AddHook(Unbound.Gamemodes.GameModeHooks.HookGameStart, (_) => RegesterBots());

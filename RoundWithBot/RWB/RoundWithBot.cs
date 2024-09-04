@@ -39,8 +39,7 @@ namespace RoundWithBot.RWB {
         }
 
         public static bool IsAExcludeCard(CardInfo card) {
-            Log($"Checking if '{card.CardName}' is an exclude card");
-            //if (CardChoice.instance.pickrID == -1 || !botsId.Contains(CardChoice.instance.pickrID)) return false;
+            if (CardChoice.instance.pickrID == -1 || !botsId.Contains(CardChoice.instance.pickrID)) return false;
 
             if(excludeCards.Any(excludeCard => excludeCard.CardName == card.CardName)) return true;
             if(card.blacklistedCategories.Contains(RoundWithBots.NoBot)) return true;
