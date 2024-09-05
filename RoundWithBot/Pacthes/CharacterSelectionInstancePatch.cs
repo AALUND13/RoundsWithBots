@@ -9,24 +9,18 @@ namespace RoundWithBot.Pacthes
     [HarmonyPatch(typeof(CharacterSelectionInstance))]
     internal class CharacterSelectionInstancePatch
     {
-        [HarmonyPatch("Start")]
-        private static void Postfix(CharacterSelectionInstance __instance)
-        {
-            if (__instance.currentPlayer.GetComponent<PlayerAPI>().enabled)
-            {
-                PlayerAI playerAI = __instance.currentPlayer.GetComponentInChildren<PlayerAI>();
-                if (playerAI != null)
-                {
-                    playerAI.gameObject.AddComponent<PlayerAIPhilip>();
-                    Object.Destroy(playerAI);
-                }
+        [HarmonyPatch("StartPicking")]
+        public static void Postfix(CharacterSelectionInstance __instance, Player pickingPlayer) {
+            PlayerAI playerAI = pickingPlayer.GetComponentInChildren<PlayerAI>();
+            if(playerAI != null) {
+                playerAI.gameObject.AddComponent<PlayerAIPhilip>();
+                Object.Destroy(playerAI);
+            }
 
-                if (ConfigHandler.RandomizationFace.Value)
-                {
+            if(pickingPlayer.GetComponent<PlayerAPI>().enabled) {
+                if(ConfigHandler.RandomizationFace.Value) {
                     __instance.currentlySelectedFace = Random.Range(0, 7);
-                }
-                else
-                {
+                } else {
                     __instance.currentlySelectedFace = ConfigHandler.SelectedFace.Value;
                 }
             }
