@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace RoundWithBot {
+namespace RoundWithBot
+{
     [BepInDependency("dev.rounds.unbound.core", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("dev.rounds.unbound.cards", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("dev.rounds.unbound.gamemodes", BepInDependency.DependencyFlags.HardDependency)]
-    //[BepInDependency("io.olavim.rounds.rwf", BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ModId, ModName, Version)]
     [BepInProcess("Rounds.exe")]
     public class RoundWithBots : BaseUnityPlugin {
@@ -36,7 +36,7 @@ namespace RoundWithBot {
 
             ConfigHandler.RegesterMenu(ModName, Config);
 
-            RWB.RoundWithBot.AddExcludeCard("Remote");
+            utils.BotAIManager.AddExcludeCard("Remote");
 
             Unbound.Gamemodes.GameModeManager.AddHook(Unbound.Gamemodes.GameModeHooks.HookPlayerPickStart, (_) => BotPicks());
             Unbound.Gamemodes.GameModeManager.AddHook(Unbound.Gamemodes.GameModeHooks.HookGameStart, (_) => RegesterBots());
@@ -52,11 +52,11 @@ namespace RoundWithBot {
                     player.GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>().text = "<#07e0f0>[BOT]";
                 }
             }
-            RWB.RoundWithBot.SetBotsId();
+            utils.BotAIManager.SetBotsId();
             yield break;
         }
         IEnumerator BotPicks() {
-            StartCoroutine(RWB.RoundWithBot.AiPickCard());
+            StartCoroutine(utils.BotAIManager.AiPickCard());
 
             yield break;
         }

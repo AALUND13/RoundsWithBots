@@ -6,66 +6,48 @@ using System.Linq;
 using Unbound.Core;
 using UnityEngine;
 
-//TODO: RENAME THIS FILE.
-namespace RoundWithBot.RWB {
-    public class RoundWithBot {
+namespace RoundWithBot.utils {
+    public class BotAIManager {
         public static List<int> botsId = new List<int>();
         public static List<CardInfo> excludeCards = new List<CardInfo>();
 
-        public static void Log(string message, bool log = true) {
-            if(ConfigHandler.DebugMode.Value && log) {
-                UnityEngine.Debug.Log(message);
-            }
-        }
-
-        public static void Error(string message, bool log = true) {
-            if(ConfigHandler.DebugMode.Value && log) {
-                UnityEngine.Debug.LogError(message);
-            }
-        }
-
-        public static void AddExcludeCard(CardInfo excludeCard, bool log = true) {
+        public static void AddExcludeCard(CardInfo excludeCard) {
             if(excludeCard == null) {
-                Log("Card is null", log);
+                UnityEngine.Debug.LogError("Card is null");
                 return;
             }
             excludeCard.categories = excludeCard.categories.AddItem(RoundWithBots.NoBot).ToArray();
             excludeCards.Add(excludeCard);
-            Log("'" + excludeCard.CardName + "' Have be added to the exclude cards", log);
+            Logger.Log("'" + excludeCard.CardName + "' Have be added to the exclude cards");
         }
-        public static void AddExcludeCard(string excludeCardName, bool log = true) {
+        public static void AddExcludeCard(string excludeCardName) {
             CardInfo card = Unbound.Cards.Utils.CardManager.GetCardInfoWithName(excludeCardName);
-            AddExcludeCard(card, log);
+            AddExcludeCard(card);
         }
 
         public static bool IsAExcludeCard(CardInfo card) {
-            if (CardChoice.instance.pickrID == -1 || !botsId.Contains(CardChoice.instance.pickrID)) return false;
+            if(CardChoice.instance.pickrID == -1 || !botsId.Contains(CardChoice.instance.pickrID)) return false;
 
             if(excludeCards.Any(excludeCard => excludeCard.CardName == card.CardName)) return true;
             if(card.blacklistedCategories.Contains(RoundWithBots.NoBot)) return true;
             return false;
         }
 
-        public static bool IsAExcludeCard(GameObject gameObject) {
-            CardInfo card = gameObject.GetComponent<CardInfo>();
-            return IsAExcludeCard(card);
-        }
-
-        public static void SetBotsId(bool log = true) {
-            Log("Getting bots player.", log);
+        public static void SetBotsId() {
+            Logger.Log("Getting bots player.");
             botsId.Clear();
             for(int i = 0; i < PlayerManager.instance.players.Count; i++) {
                 Player player = PlayerManager.instance.players[i];
                 if(player.GetComponent<PlayerAPI>().enabled) {
                     botsId.Add(player.playerID);
-                    Log("Bot '" + player.playerID + "' Have be added to the list of bots id.", log);
+                    Logger.Log("Bot '" + player.playerID + "' Have be added to the list of bots id.");
                 }
             }
-            Log("Successfully get list of bots player.", log);
+            Logger.Log("Successfully get list of bots player.");
         }
 
-        public static List<GameObject> GetRarestCards(List<GameObject> spawnCards, bool log = true) {
-            Log("getting rarest cards...", log);
+        public static List<GameObject> GetRarestCards(List<GameObject> spawnCards) {
+            Logger.Log("getting rarest cards...");
             List<GameObject> spawnedCards = GetSpawnCards();
 
             CardInfo.Rarity rarestRarityModifier = spawnCards.Select(card => card.GetComponent<CardInfo>().rarity).Min();
@@ -73,13 +55,13 @@ namespace RoundWithBot.RWB {
             return rarestCards;
         }
 
-        public static List<GameObject> GetSpawnCards(bool log = true) {
-            Log("Getting spawn cards", log);
+        public static List<GameObject> GetSpawnCards() {
+            Logger.Log("Getting spawn cards");
             return (List<GameObject>)AccessTools.Field(typeof(CardChoice), "spawnedCards").GetValue(CardChoice.instance);
         }
 
-        public static IEnumerator CycleThroughCards(float delay, List<GameObject> spawnedCards, bool log = true) {
-            Log("Cycling through cards", log);
+        public static IEnumerator CycleThroughCards(float delay, List<GameObject> spawnedCards) {
+            Logger.Log("Cycling through cards");
 
             CardInfo lastCardInfo = null;
             int index = 0;
@@ -87,7 +69,7 @@ namespace RoundWithBot.RWB {
             foreach(var cardObject in spawnedCards) {
                 CardInfo cardInfo = cardObject.GetComponent<CardInfo>();
 
-                Log("Cycling through '" + cardInfo.CardName + "' card", log);
+                Logger.Log("Cycling through '" + cardInfo.CardName + "' card");
                 if(lastCardInfo != null) {
                     lastCardInfo.RPCA_ChangeSelected(false);
                 }
@@ -98,14 +80,14 @@ namespace RoundWithBot.RWB {
                 index++;
                 yield return new WaitForSeconds(delay);
             }
-            Log("Successfully gone through all cards");
+            Logger.Log("Successfully gone through all cards");
             yield break;
         }
 
-        public static IEnumerator GoToCards(List<GameObject> rarestCards, List<GameObject> spawnedCards, float delay, bool log = true) {
-            int randomIndex = UnityEngine.Random.Range(0, rarestCards.Count - 1);
+        public static IEnumerator GoToCards(List<GameObject> rarestCards, List<GameObject> spawnedCards, float delay) {
+            int randomIndex = Random.Range(0, rarestCards.Count - 1);
             GameObject cardToPick = rarestCards[randomIndex];
-            Log("Going to '" + cardToPick + "' card", log);
+            Logger.Log("Going to '" + cardToPick + "' card");
 
             // Set currentlySelectedCard to the index of the selected card within the spawnedCards list
             int selectedCardIndex = spawnedCards.IndexOf(cardToPick);
@@ -114,7 +96,7 @@ namespace RoundWithBot.RWB {
             while(handIndex != selectedCardIndex) {
                 CardInfo cardInfo = spawnedCards[handIndex].GetComponent<CardInfo>();
                 cardInfo.RPCA_ChangeSelected(false);
-                Log("Currently on '" + cardInfo + "' card", log);
+                Logger.Log("Currently on '" + cardInfo + "' card");
                 if(handIndex > selectedCardIndex) {
                     handIndex--;
                 } else if(handIndex < selectedCardIndex) {
@@ -127,7 +109,7 @@ namespace RoundWithBot.RWB {
                 // Wait for some time before the next iteration
                 yield return new WaitForSeconds(delay); // Adjust the time as needed
             }
-            Log("Successfully got to '" + cardToPick + "' card", log);
+            Logger.Log("Successfully got to '" + cardToPick + "' card");
             yield break;
         }
 
@@ -146,7 +128,7 @@ namespace RoundWithBot.RWB {
                 Player player = PlayerManager.instance.players[i];
                 if(player.GetComponent<PlayerAPI>().enabled && botsId.Contains(CardChoice.instance.pickrID)) {
 
-                    Log("AI picking card");
+                    Logger.Log("AI picking card");
                     List<GameObject> spawnCards = GetSpawnCards();
                     spawnCards[0].GetComponent<CardInfo>().RPCA_ChangeSelected(true);
                     yield return new WaitForSeconds(0.25f);

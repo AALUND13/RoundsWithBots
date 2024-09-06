@@ -1,8 +1,10 @@
 ﻿using HarmonyLib;
+using RoundWithBot.utils;
 using System.Reflection;
 using UnityEngine;
 
-namespace RoundWithBot.Pacthes {
+namespace RoundWithBot.Pacthes
+{
     [HarmonyPatch(typeof(PlayerAIPhilip))]
     internal class PlayerAiPatch {
         [HarmonyPatch("Update")]
@@ -33,7 +35,7 @@ namespace RoundWithBot.Pacthes {
             bool isNearBoundaries = (diffX <= maxDistance || diffY <= maxDistance) && (diffX >= maxDistance || diffY >= maxDistance);
 
             if(isNearBoundaries) {
-                RWB.RoundWithBot.Log("Bot Is Near Boundaries");
+                utils.Logger.Log("Bot Is Near Boundaries");
                 input.shieldWasPressed = true;
             }
         }

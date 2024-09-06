@@ -6,8 +6,6 @@ using Unbound.Core.Utils.UI;
 using UnityEngine;
 
 namespace RoundWithBot {
-
-
     internal class ConfigHandler {
         public static ConfigEntry<bool> RandomizationFace;
         public static ConfigEntry<int> SelectedFace;

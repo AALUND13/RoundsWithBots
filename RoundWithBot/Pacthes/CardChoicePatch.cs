@@ -7,7 +7,8 @@ using Unbound.Cards.Utils;
 using Unbound.Core;
 using UnityEngine;
 
-namespace RoundWithBot.Patches.RWF {
+namespace RoundWithBot.Patches.RWF
+{
     public static class SpawnedCardsHolder {
         public static List<CardInfo> spawnedCards = new List<CardInfo>();
     }
@@ -16,7 +17,7 @@ namespace RoundWithBot.Patches.RWF {
     public static class CardChoicePatch {
         private static List<CardInfo> GetSpawnabeCards() {
             List<CardInfo> enableCards = CardChoice.instance.cards.ToList();
-            List<CardInfo> spawnabeCards = enableCards.Except(SpawnedCardsHolder.spawnedCards).Except(RWB.RoundWithBot.excludeCards).ToList();
+            List<CardInfo> spawnabeCards = enableCards.Except(SpawnedCardsHolder.spawnedCards).Except(utils.BotAIManager.excludeCards).ToList();
             return spawnabeCards;
         }
 
@@ -36,8 +37,8 @@ namespace RoundWithBot.Patches.RWF {
         [HarmonyPatch("GetRandomCard")]
         [HarmonyPostfix]
         private static void IgnoreExcludedCards(ref GameObject __result) {
-            if(GetSpawnabeCards().Count != 0 && RWB.RoundWithBot.IsAExcludeCard(__result)) {
-                GameObject card = (GameObject)AccessTools.Method(typeof(CardChoice), "GetRandomCard").Invoke(CardChoice.instance, null);
+            if(GetSpawnabeCards().Count != 0 && utils.BotAIManager.IsAExcludeCard(__result.GetComponent<CardInfo>())) {
+            GameObject card = (GameObject)AccessTools.Method(typeof(CardChoice), "GetRandomCard").Invoke(CardChoice.instance, null);
                 __result = card;
             }
         }
