@@ -1,14 +1,11 @@
 ﻿using HarmonyLib;
 using InControl;
-using RoundWithBot.RWB;
 using Unbound.Core;
 using UnityEngine;
 
-namespace RoundWithBot.Pacthes
-{
+namespace RoundWithBot.Pacthes {
     [HarmonyPatch(typeof(CharacterSelectionInstance))]
-    internal class CharacterSelectionInstancePatch
-    {
+    internal class CharacterSelectionInstancePatch {
         [HarmonyPatch("StartPicking")]
         public static void Postfix(CharacterSelectionInstance __instance, Player pickingPlayer) {
             PlayerAI playerAI = pickingPlayer.GetComponentInChildren<PlayerAI>();
@@ -27,25 +24,20 @@ namespace RoundWithBot.Pacthes
         }
 
         [HarmonyPatch("Update")]
-        private static bool Prefix(CharacterSelectionInstance __instance)
-        {
-            if (__instance.currentPlayer == null)
-            {
+        private static bool Prefix(CharacterSelectionInstance __instance) {
+            if(__instance.currentPlayer == null) {
                 return false;
             }
 
 
-            if (__instance.currentPlayer.GetComponent<PlayerAPI>().enabled)
-            {
+            if(__instance.currentPlayer.GetComponent<PlayerAPI>().enabled) {
                 __instance.currentPlayer.data.playerVel.SetFieldValue("simulated", false);
-                if (__instance.currentPlayer.data.playerActions == null)
-                {
+                if(__instance.currentPlayer.data.playerActions == null) {
                     __instance.currentPlayer.data.playerActions = new PlayerActions();
                     __instance.currentPlayer.data.playerActions.Device = InputDevice.Null;
                 }
 
-                if (Input.GetKeyDown(KeyCode.R))
-                {
+                if(Input.GetKeyDown(KeyCode.R)) {
                     AccessTools.Method(typeof(CharacterSelectionInstance), "ReadyUp").Invoke(__instance, null);
                     return false;
                 }

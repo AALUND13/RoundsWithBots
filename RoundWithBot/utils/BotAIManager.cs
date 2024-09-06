@@ -13,11 +13,12 @@ namespace RoundWithBot.utils {
 
         public static void AddExcludeCard(CardInfo excludeCard) {
             if(excludeCard == null) {
-                UnityEngine.Debug.LogError("Card is null");
-                return;
+                throw new System.ArgumentNullException("excludeCard", "The exclude card can't be null");
             }
+
             excludeCard.categories = excludeCard.categories.AddItem(RoundWithBots.NoBot).ToArray();
             excludeCards.Add(excludeCard);
+
             Logger.Log("'" + excludeCard.CardName + "' Have be added to the exclude cards");
         }
         public static void AddExcludeCard(string excludeCardName) {
@@ -26,32 +27,33 @@ namespace RoundWithBot.utils {
         }
 
         public static bool IsAExcludeCard(CardInfo card) {
-            if(CardChoice.instance.pickrID == -1 || !botsId.Contains(CardChoice.instance.pickrID)) return false;
-
-            if(excludeCards.Any(excludeCard => excludeCard.CardName == card.CardName)) return true;
-            if(card.blacklistedCategories.Contains(RoundWithBots.NoBot)) return true;
-            return false;
+            return (CardChoice.instance.pickrID != -1 && botsId.Contains(CardChoice.instance.pickrID)) &&
+                   (excludeCards.Any(excludeCard => excludeCard.CardName == card.CardName) ||
+                   card.blacklistedCategories.Contains(RoundWithBots.NoBot));
         }
 
         public static void SetBotsId() {
             Logger.Log("Getting bots player.");
+
             botsId.Clear();
-            for(int i = 0; i < PlayerManager.instance.players.Count; i++) {
-                Player player = PlayerManager.instance.players[i];
-                if(player.GetComponent<PlayerAPI>().enabled) {
-                    botsId.Add(player.playerID);
-                    Logger.Log("Bot '" + player.playerID + "' Have be added to the list of bots id.");
-                }
-            }
+            botsId = PlayerManager.instance.players
+                     .Where(player => player.GetComponent<PlayerAPI>().enabled)
+                     .Select(player => player.playerID)
+                     .ToList();
+
+            botsId.ForEach(id => Logger.Log($"Bot '{id}' has been added to the list of bots id."));
             Logger.Log("Successfully get list of bots player.");
         }
 
         public static List<GameObject> GetRarestCards(List<GameObject> spawnCards) {
             Logger.Log("getting rarest cards...");
-            List<GameObject> spawnedCards = GetSpawnCards();
 
-            CardInfo.Rarity rarestRarityModifier = spawnCards.Select(card => card.GetComponent<CardInfo>().rarity).Min();
-            List<GameObject> rarestCards = spawnCards.Where(card => card.GetComponent<CardInfo>().rarity == rarestRarityModifier).ToList();
+            List<GameObject> rarestCards = spawnCards
+                 .GroupBy(card => card.GetComponent<CardInfo>().rarity)
+                 .OrderBy(group => group.Key)
+                 .Reverse()
+                 .FirstOrDefault()?.ToList() ?? new List<GameObject>();
+
             return rarestCards;
         }
 
@@ -117,6 +119,15 @@ namespace RoundWithBot.utils {
             CardChoice.instance.Pick(spawnCards[(int)CardChoice.instance.GetFieldValue("currentlySelectedCard")], true);
             yield break;
         }
+        
+        public static IEnumerator PickBestCard(List<GameObject> spawnCards, float initialDelay, float cycleDelay, float goToDelay, float pickDelay) {
+        yield return new WaitForSeconds(initialDelay);
+            yield return CycleThroughCards(cycleDelay, spawnCards);
+            List<GameObject> rarestCards = GetRarestCards(spawnCards);
+            yield return GoToCards(rarestCards, spawnCards, goToDelay);
+            yield return new WaitForSeconds(pickDelay);
+            yield return PickCard(spawnCards);
+        }
 
         public static IEnumerator AiPickCard() {
             yield return new WaitUntil(() => {
@@ -131,16 +142,7 @@ namespace RoundWithBot.utils {
                     Logger.Log("AI picking card");
                     List<GameObject> spawnCards = GetSpawnCards();
                     spawnCards[0].GetComponent<CardInfo>().RPCA_ChangeSelected(true);
-                    yield return new WaitForSeconds(0.25f);
-
-                    yield return CycleThroughCards(0.30f, spawnCards);
-
-                    yield return new WaitForSeconds(1f);
-
-                    List<GameObject> rarestCards = GetRarestCards(spawnCards);
-                    yield return GoToCards(rarestCards, spawnCards, 0.20f);
-                    yield return new WaitForSeconds(1f);
-                    yield return PickCard(spawnCards);
+                    yield return PickBestCard(spawnCards, 0.25f, 0.3f, 0.2f, 0.5f);
                     break;
                 }
             }

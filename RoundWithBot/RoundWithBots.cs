@@ -25,11 +25,8 @@ namespace RoundWithBot
         private List<int> botPlayer = new List<int>();
 
         void Awake() {
-            // Use this to call any harmony patch files your mod may have
-            try {
-                var harmony = new Harmony(ModId);
-                harmony.PatchAll();
-            } catch { }
+            var harmony = new Harmony(ModId);
+            harmony.PatchAll();
         }
         void Start() {
             instance = this;
