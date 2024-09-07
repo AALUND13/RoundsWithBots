@@ -1,13 +1,10 @@
 ﻿using BepInEx;
 using HarmonyLib;
-using HarmonyLib.Tools;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEngine;
 
-namespace RoundWithBot
-{
+namespace RoundWithBot {
     [BepInDependency("dev.rounds.unbound.core", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("dev.rounds.unbound.cards", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("dev.rounds.unbound.gamemodes", BepInDependency.DependencyFlags.HardDependency)]
@@ -34,13 +31,14 @@ namespace RoundWithBot
             ConfigHandler.RegesterMenu(ModName, Config);
 
             utils.BotAIManager.AddExcludeCard("Remote");
+            utils.BotAIManager.AddExcludeCard("Teleport");
 
             Unbound.Gamemodes.GameModeManager.AddHook(Unbound.Gamemodes.GameModeHooks.HookPlayerPickStart, (_) => BotPicks());
-            Unbound.Gamemodes.GameModeManager.AddHook(Unbound.Gamemodes.GameModeHooks.HookGameStart, (_) => RegesterBots());
+            Unbound.Gamemodes.GameModeManager.AddHook(Unbound.Gamemodes.GameModeHooks.HookGameStart, (_) => RegisterBots());
 
         }
 
-        IEnumerator RegesterBots() {
+        IEnumerator RegisterBots() {
             botPlayer.Clear();
             for(int i = 0; i < PlayerManager.instance.players.Count; i++) {
                 Player player = PlayerManager.instance.players[i];

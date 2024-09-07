@@ -1,22 +1,14 @@
 ﻿using HarmonyLib;
-using RoundWithBot.utils;
 using System.Reflection;
 using UnityEngine;
 
-namespace RoundWithBot.Pacthes
-{
+namespace RoundWithBot.Pacthes {
     [HarmonyPatch(typeof(PlayerAIPhilip))]
     internal class PlayerAiPatch {
         [HarmonyPatch("Update")]
         private static void Postfix(PlayerAIPhilip __instance) {
             // Find an instance of OutOfBoundsHandler in the scene
             OutOfBoundsHandler outOfBoundsHandlerInstance = GameObject.FindObjectOfType<OutOfBoundsHandler>();
-
-            if(outOfBoundsHandlerInstance == null) {
-                // Handle the case where the component is not found
-                UnityEngine.Debug.LogError("OutOfBoundsHandler not found in the scene.");
-                return;
-            }
 
             MethodInfo getPointMethod = AccessTools.Method(typeof(OutOfBoundsHandler), "GetPoint");
             GeneralInput input = (GeneralInput)AccessTools.Field(typeof(PlayerAPI), "input").GetValue(__instance.GetComponentInParent<PlayerAPI>());

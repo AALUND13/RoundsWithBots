@@ -19,7 +19,7 @@ namespace RoundWithBot.utils {
             excludeCard.categories = excludeCard.categories.AddItem(RoundWithBots.NoBot).ToArray();
             excludeCards.Add(excludeCard);
 
-            Logger.Log("'" + excludeCard.CardName + "' Have be added to the exclude cards");
+            Logger.Log($"{excludeCard.CardName} has been added to the exclude cards");
         }
         public static void AddExcludeCard(string excludeCardName) {
             CardInfo card = Unbound.Cards.Utils.CardManager.GetCardInfoWithName(excludeCardName);
@@ -51,8 +51,7 @@ namespace RoundWithBot.utils {
             List<GameObject> rarestCards = spawnCards
                  .GroupBy(card => card.GetComponent<CardInfo>().rarity)
                  .OrderBy(group => group.Key)
-                 .Reverse()
-                 .FirstOrDefault()?.ToList() ?? new List<GameObject>();
+                 .LastOrDefault()?.ToList() ?? new List<GameObject>();
 
             return rarestCards;
         }
@@ -71,7 +70,7 @@ namespace RoundWithBot.utils {
             foreach(var cardObject in spawnedCards) {
                 CardInfo cardInfo = cardObject.GetComponent<CardInfo>();
 
-                Logger.Log("Cycling through '" + cardInfo.CardName + "' card");
+                Logger.Log($"Cycling through '${cardInfo.CardName}' card");
                 if(lastCardInfo != null) {
                     lastCardInfo.RPCA_ChangeSelected(false);
                 }
@@ -89,7 +88,7 @@ namespace RoundWithBot.utils {
         public static IEnumerator GoToCards(List<GameObject> rarestCards, List<GameObject> spawnedCards, float delay) {
             int randomIndex = Random.Range(0, rarestCards.Count - 1);
             GameObject cardToPick = rarestCards[randomIndex];
-            Logger.Log("Going to '" + cardToPick + "' card");
+            Logger.Log($"Going to '${cardToPick}' card");
 
             // Set currentlySelectedCard to the index of the selected card within the spawnedCards list
             int selectedCardIndex = spawnedCards.IndexOf(cardToPick);
@@ -98,7 +97,7 @@ namespace RoundWithBot.utils {
             while(handIndex != selectedCardIndex) {
                 CardInfo cardInfo = spawnedCards[handIndex].GetComponent<CardInfo>();
                 cardInfo.RPCA_ChangeSelected(false);
-                Logger.Log("Currently on '" + cardInfo + "' card");
+                Logger.Log($"Currently on '${cardInfo}' card");
                 if(handIndex > selectedCardIndex) {
                     handIndex--;
                 } else if(handIndex < selectedCardIndex) {
@@ -111,7 +110,7 @@ namespace RoundWithBot.utils {
                 // Wait for some time before the next iteration
                 yield return new WaitForSeconds(delay); // Adjust the time as needed
             }
-            Logger.Log("Successfully got to '" + cardToPick + "' card");
+            Logger.Log($"Successfully got to '${cardToPick}' card");
             yield break;
         }
 

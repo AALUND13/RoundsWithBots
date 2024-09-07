@@ -8,7 +8,7 @@ namespace RoundWithBot.Pacthes {
     internal class CharacterSelectionInstancePatch {
         [HarmonyPatch("StartPicking")]
         public static void Postfix(CharacterSelectionInstance __instance, Player pickingPlayer) {
-            PlayerAI playerAI = pickingPlayer.GetComponentInChildren<PlayerAI>();
+            MonoBehaviour playerAI = pickingPlayer.GetComponentInChildren<PlayerAI>() ?? (MonoBehaviour)pickingPlayer.GetComponentInChildren<PlayerAIZorro>();
             if(playerAI != null) {
                 playerAI.gameObject.AddComponent<PlayerAIPhilip>();
                 Object.Destroy(playerAI);

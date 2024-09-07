@@ -1,14 +1,9 @@
-﻿using System;
+﻿using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
-using HarmonyLib;
-using Unbound.Cards.Utils;
-using Unbound.Core;
 using UnityEngine;
 
-namespace RoundWithBot.Patches.RWF
-{
+namespace RoundWithBot.Patches.RWF {
     public static class SpawnedCardsHolder {
         public static List<CardInfo> spawnedCards = new List<CardInfo>();
     }
@@ -38,7 +33,7 @@ namespace RoundWithBot.Patches.RWF
         [HarmonyPostfix]
         private static void IgnoreExcludedCards(ref GameObject __result) {
             if(GetSpawnabeCards().Count != 0 && utils.BotAIManager.IsAExcludeCard(__result.GetComponent<CardInfo>())) {
-            GameObject card = (GameObject)AccessTools.Method(typeof(CardChoice), "GetRandomCard").Invoke(CardChoice.instance, null);
+                GameObject card = (GameObject)AccessTools.Method(typeof(CardChoice), "GetRandomCard").Invoke(CardChoice.instance, null);
                 __result = card;
             }
         }
