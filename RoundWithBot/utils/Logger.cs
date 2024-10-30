@@ -1,4 +1,4 @@
-﻿namespace RoundWithBot.utils {
+﻿namespace RoundsWithBots.utils {
     public static class Logger {
         public static void Log(string message) {
             if(ConfigHandler.DebugMode.Value) {

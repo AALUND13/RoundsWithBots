@@ -1,18 +1,18 @@
 ﻿using BepInEx.Configuration;
 using System;
 using TMPro;
-using Unbound.Core;
-using Unbound.Core.Utils.UI;
+using UnboundLib;
+using UnboundLib.Utils.UI;
 using UnityEngine;
 
-namespace RoundWithBot {
+namespace RoundsWithBots {
     internal class ConfigHandler {
         public static ConfigEntry<bool> RandomizationFace;
         public static ConfigEntry<int> SelectedFace;
         public static ConfigEntry<bool> DebugMode;
 
         public static void RegesterMenu(string modName, ConfigFile config) {
-            UnboundCore.RegisterMenu(modName, () => { }, NewGui, null, false);
+            Unbound.RegisterMenu(modName, () => { }, NewGui, null, false);
             RandomizationFace = config.Bind(modName, "RandomizationFace", true, "Enable randomization of bots' faces.");
             SelectedFace = config.Bind(modName, "SelectedFace", 0, "Set the index for bots to select a specific face.");
             DebugMode = config.Bind(modName, "DebugMode", false, "Enabled or disabled Debug Mode");

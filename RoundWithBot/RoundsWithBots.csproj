@@ -59,6 +59,12 @@
 		<Reference Include="RoundsWithFriends">
 			<HintPath>$(BepInExFolder)\plugins\olavim-RoundsWithFriends\RoundsWithFriends.dll</HintPath>
 		</Reference>
+		<Reference Include="ModdingUtils">
+			<HintPath>$(BepInExFolder)\plugins\Pykess-ModdingUtils\ModdingUtils.dll</HintPath>
+		</Reference>
+		<Reference Include="CardChoiceSpawnUniqueCardPatch">
+			<HintPath>$(BepInExFolder)\plugins\Pykess-CardChoiceSpawnUniqueCardPatch\CardChoiceSpawnUniqueCardPatch.dll</HintPath>
+		</Reference>
 		
 		<!--Game Binary-->
     <Reference Include="Assembly-CSharp">
@@ -84,9 +90,6 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(ManagedFolder)\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>$(ManagedFolder)\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Physics2DModule">
       <HintPath>$(ManagedFolder)\UnityEngine.Physics2DModule.dll</HintPath>

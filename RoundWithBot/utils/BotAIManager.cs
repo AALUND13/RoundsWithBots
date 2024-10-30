@@ -1,35 +1,20 @@
-﻿using HarmonyLib;
+﻿using CardChoiceSpawnUniqueCardPatch.CustomCategories;
+using HarmonyLib;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unbound.Core;
+using UnboundLib;
 using UnityEngine;
 
-namespace RoundWithBot.utils {
+namespace RoundsWithBots.utils {
     public class BotAIManager {
         public static List<int> botsId = new List<int>();
-        public static List<CardInfo> excludeCards = new List<CardInfo>();
-
-        public static void AddExcludeCard(CardInfo excludeCard) {
-            if(excludeCard == null) {
-                throw new System.ArgumentNullException("excludeCard", "The exclude card can't be null");
-            }
-
-            excludeCard.categories = excludeCard.categories.AddItem(RoundWithBots.NoBot).ToArray();
-            excludeCards.Add(excludeCard);
-
-            Logger.Log($"{excludeCard.CardName} has been added to the exclude cards");
-        }
-        public static void AddExcludeCard(string excludeCardName) {
-            CardInfo card = Unbound.Cards.Utils.CardManager.GetCardInfoWithName(excludeCardName);
-            AddExcludeCard(card);
-        }
 
         public static bool IsAExcludeCard(CardInfo card) {
-            return (CardChoice.instance.pickrID != -1 && botsId.Contains(CardChoice.instance.pickrID)) &&
-                   (excludeCards.Any(excludeCard => excludeCard.CardName == card.CardName) ||
-                   card.blacklistedCategories.Contains(RoundWithBots.NoBot));
+            return CardChoice.instance.pickrID != -1
+                && botsId.Contains(CardChoice.instance.pickrID)
+                && card.blacklistedCategories.Contains(CustomCardCategories.instance.CardCategory("NotForBots"));
         }
 
         public static void SetBotsId() {
@@ -70,7 +55,7 @@ namespace RoundWithBot.utils {
             foreach(var cardObject in spawnedCards) {
                 CardInfo cardInfo = cardObject.GetComponent<CardInfo>();
 
-                Logger.Log($"Cycling through '${cardInfo.CardName}' card");
+                Logger.Log($"Cycling through '${cardInfo.cardName}' card");
                 if(lastCardInfo != null) {
                     lastCardInfo.RPCA_ChangeSelected(false);
                 }
@@ -108,7 +93,7 @@ namespace RoundWithBot.utils {
                 AccessTools.Field(typeof(CardChoice), "currentlySelectedCard").SetValue(CardChoice.instance, handIndex);
 
                 // Wait for some time before the next iteration
-                yield return new WaitForSeconds(delay); // Adjust the time as needed
+                yield return new WaitForSeconds(delay);
             }
             Logger.Log($"Successfully got to '${cardToPick}' card");
             yield break;
@@ -118,9 +103,9 @@ namespace RoundWithBot.utils {
             CardChoice.instance.Pick(spawnCards[(int)CardChoice.instance.GetFieldValue("currentlySelectedCard")], true);
             yield break;
         }
-        
+
         public static IEnumerator PickBestCard(List<GameObject> spawnCards, float initialDelay, float cycleDelay, float goToDelay, float pickDelay) {
-        yield return new WaitForSeconds(initialDelay);
+            yield return new WaitForSeconds(initialDelay);
             yield return CycleThroughCards(cycleDelay, spawnCards);
             List<GameObject> rarestCards = GetRarestCards(spawnCards);
             yield return GoToCards(rarestCards, spawnCards, goToDelay);
@@ -134,6 +119,7 @@ namespace RoundWithBot.utils {
                ((List<GameObject>)CardChoice.instance.GetFieldValue("spawnedCards")).Count == ((Transform[])CardChoice.instance.GetFieldValue("children")).Count() &&
                !((List<GameObject>)CardChoice.instance.GetFieldValue("spawnedCards")).Any(card => { return card == null; });
             }); //wait untill all the cards are generated
+
             for(int i = 0; i < PlayerManager.instance.players.Count; i++) {
                 Player player = PlayerManager.instance.players[i];
                 if(player.GetComponent<PlayerAPI>().enabled && botsId.Contains(CardChoice.instance.pickrID)) {

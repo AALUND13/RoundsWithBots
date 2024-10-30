@@ -1,12 +1,13 @@
 ﻿using HarmonyLib;
 using InControl;
-using Unbound.Core;
+using UnboundLib;
 using UnityEngine;
 
-namespace RoundWithBot.Pacthes {
+namespace RoundsWithBots.Pacthes {
     [HarmonyPatch(typeof(CharacterSelectionInstance))]
     internal class CharacterSelectionInstancePatch {
         [HarmonyPatch("StartPicking")]
+        [HarmonyBefore("io.olavim.rounds.rwf")]
         public static void Postfix(CharacterSelectionInstance __instance, Player pickingPlayer) {
             MonoBehaviour playerAI = pickingPlayer.GetComponentInChildren<PlayerAI>() ?? (MonoBehaviour)pickingPlayer.GetComponentInChildren<PlayerAIZorro>();
             if(playerAI != null) {
@@ -24,7 +25,8 @@ namespace RoundWithBot.Pacthes {
         }
 
         [HarmonyPatch("Update")]
-        private static bool Prefix(CharacterSelectionInstance __instance) {
+        [HarmonyBefore("io.olavim.rounds.rwf")]
+        public static bool Prefix(CharacterSelectionInstance __instance) {
             if(__instance.currentPlayer == null) {
                 return false;
             }

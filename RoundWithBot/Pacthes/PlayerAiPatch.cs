@@ -2,11 +2,11 @@
 using System.Reflection;
 using UnityEngine;
 
-namespace RoundWithBot.Pacthes {
+namespace RoundsWithBots.Pacthes {
     [HarmonyPatch(typeof(PlayerAIPhilip))]
     internal class PlayerAiPatch {
         [HarmonyPatch("Update")]
-        private static void Postfix(PlayerAIPhilip __instance) {
+        public static void Postfix(PlayerAIPhilip __instance) {
             // Find an instance of OutOfBoundsHandler in the scene
             OutOfBoundsHandler outOfBoundsHandlerInstance = GameObject.FindObjectOfType<OutOfBoundsHandler>();
 
