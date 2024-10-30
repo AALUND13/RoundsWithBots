@@ -1,4 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <None Include="..\README.md" />
+    <None Include="..\.gitignore" />
+  </ItemGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<DebugSymbols>true</DebugSymbols>
 		<DebugType>embedded</DebugType>
@@ -9,35 +14,53 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
-
 	<PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-  </PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<OutputType>Library</OutputType>
+		<Authors>RoundsModding</Authors>
+		<TargetFramework>net461</TargetFramework>
+		<FileAlignment>512</FileAlignment>
+		<Deterministic>true</Deterministic>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
     <Compile Remove="Patches\**" />
     <EmbeddedResource Remove="Patches\**" />
     <None Remove="Patches\**" />
   </ItemGroup>
-
-  <Import Project="..\Common\CommonSettings.props" />
+  
+  <PropertyGroup>
+		<RoundsFolder>C:\Program Files (x86)\Steam\steamapps\common\ROUNDS</RoundsFolder>
+    <ManagedFolder>$(RoundsFolder)\ROUNDS_Data\Managed</ManagedFolder>
+		
+		<BepInExFolder>C:\Users\tamlu\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx</BepInExFolder>
+		
+		<IndirectBuildTask>true</IndirectBuildTask>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+		
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
 
   <ItemGroup>
+		<!--0Harmony and BepInEx-->
     <Reference Include="0Harmony">
-      <HintPath>..\Assemblies\0Harmony.dll</HintPath>
+      <HintPath>$(BepInExFolder)\core\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\Assemblies\BepInEx.dll</HintPath>
+      <HintPath>$(BepInExFolder)\core\BepInEx.dll</HintPath>
     </Reference>
-    <Reference Include="UnboundLib">
-      <HintPath>..\Assemblies\UnboundLib.dll</HintPath>
-    </Reference>
-    <Reference Include="UnboundCards">
-      <HintPath>..\Assemblies\UnboundCards.dll</HintPath>
-    </Reference>
-	<Reference Include="UnboundGamemodes">
-		<HintPath>..\Assemblies\UnboundGamemodes.dll</HintPath>
-	</Reference>
+		
+		<!--Mods-->
+		<Reference Include="UnboundLib">
+			<HintPath>$(BepInExFolder)\plugins\willis81808-UnboundLib\UnboundLib.dll</HintPath>
+		</Reference>
+		<Reference Include="RoundsWithFriends">
+			<HintPath>$(BepInExFolder)\plugins\olavim-RoundsWithFriends\RoundsWithFriends.dll</HintPath>
+		</Reference>
+		
+		<!--Game Binary-->
     <Reference Include="Assembly-CSharp">
       <HintPath>$(ManagedFolder)\Assembly-CSharp.dll</HintPath>
     </Reference>
