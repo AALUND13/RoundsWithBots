@@ -1,33 +1,24 @@
 ﻿using HarmonyLib;
-using System.Reflection;
 using UnityEngine;
 
 namespace RoundsWithBots.Pacthes {
     [HarmonyPatch(typeof(PlayerAIPhilip))]
     internal class PlayerAiPatch {
-        [HarmonyPatch("Update")]
-        public static void Postfix(PlayerAIPhilip __instance) {
-            // Find an instance of OutOfBoundsHandler in the scene
-            OutOfBoundsHandler outOfBoundsHandlerInstance = GameObject.FindObjectOfType<OutOfBoundsHandler>();
+        private const float maxDistance = 1.0f;
 
-            MethodInfo getPointMethod = AccessTools.Method(typeof(OutOfBoundsHandler), "GetPoint");
+        [HarmonyPatch("Update")]
+        public  static void Postfix(PlayerAIPhilip __instance) {
             GeneralInput input = (GeneralInput)AccessTools.Field(typeof(PlayerAPI), "input").GetValue(__instance.GetComponentInParent<PlayerAPI>());
 
-            // Invoke the GetPoint method on the outOfBoundsHandlerInstance
-            Vector3 bound = (Vector3)getPointMethod.Invoke(outOfBoundsHandlerInstance, new object[] { __instance.gameObject.transform.position });
+            OutOfBoundsHandler outOfBoundsHandlerInstance = GameObject.FindObjectOfType<OutOfBoundsHandler>();
+            Vector3 bound = (Vector3)AccessTools.Method(typeof(OutOfBoundsHandler), "GetPoint")
+                .Invoke(outOfBoundsHandlerInstance, new object[] { __instance.gameObject.transform.position });
 
-            // Calculate the absolute differences between the bot's position and the boundaries
             float diffX = Mathf.Abs(__instance.gameObject.transform.position.x - bound.x);
             float diffY = Mathf.Abs(__instance.gameObject.transform.position.y - bound.y);
-
-            // Define the maximum allowed distance from the boundaries
-            float maxDistance = 1.0f;
-
-            // Check if the bot is near the boundaries but not inside them
             bool isNearBoundaries = (diffX <= maxDistance || diffY <= maxDistance) && (diffX >= maxDistance || diffY >= maxDistance);
 
             if(isNearBoundaries) {
-                utils.Logger.Log("Bot Is Near Boundaries");
                 input.shieldWasPressed = true;
             }
         }

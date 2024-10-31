@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using CardChoiceSpawnUniqueCardPatch.CustomCategories;
 using HarmonyLib;
+using RoundsWithBots.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -35,8 +36,9 @@ namespace RoundsWithBots {
 
             ConfigHandler.RegesterMenu(ModName, Config);
 
-            CardManager.GetCardInfoWithName("Remote").blacklistedCategories.AddItem(CustomCardCategories.instance.CardCategory("not-for-bots"));
-            CardManager.GetCardInfoWithName("Teleport").blacklistedCategories.AddItem(CustomCardCategories.instance.CardCategory("not-for-bots"));
+            CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Remote"));
+            CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Teleport"));
+            CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Shield Charge"));
             
             GameModeManager.AddHook(GameModeHooks.HookPlayerPickStart, (_) => BotPicks());
             GameModeManager.AddHook(GameModeHooks.HookGameStart, (_) => RegisterBots());
@@ -51,12 +53,12 @@ namespace RoundsWithBots {
                     player.GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>().text = "<#07e0f0>[BOT]";
                 }
             }
-            utils.BotAIManager.SetBotsId();
+            BotAIManager.instance.SetBotsId();
 
             yield break;
         }
         IEnumerator BotPicks() {
-            StartCoroutine(utils.BotAIManager.AiPickCard());
+            StartCoroutine(BotAIManager.instance.AiPickCard());
 
             yield break;
         }

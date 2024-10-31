@@ -18,25 +18,25 @@ namespace RoundsWithBots {
             DebugMode = config.Bind(modName, "DebugMode", false, "Enabled or disabled Debug Mode");
         }
 
-        public static void addBlank(GameObject menu) {
+        public static void AddBlank(GameObject menu) {
             MenuHandler.CreateText(" ", menu, out TextMeshProUGUI _, 30);
         }
 
         public static void NewGui(GameObject menu) {
             MenuHandler.CreateText("Rounds With Bots | Config", menu, out TextMeshProUGUI _, 60);
-            addBlank(menu);
+            AddBlank(menu);
             void RandomizationFaceChanged(bool val) {
                 RandomizationFace.Value = val;
             }
             MenuHandler.CreateToggle(RandomizationFace.Value, "Randomization Face", menu, RandomizationFaceChanged, 30);
-            addBlank(menu);
+            AddBlank(menu);
             MenuHandler.CreateText("Selected Face | <#c41010> Only Work When 'Randomization Face' Config Is Off!", menu, out TextMeshProUGUI _, 30);
-            addBlank(menu);
+            AddBlank(menu);
             void SelectedFaceChanged(float val) {
                 SelectedFace.Value = (int)Math.Round(val);
             }
             MenuHandler.CreateSlider("Selected Face", menu, 30, 0, 7, SelectedFace.Value, SelectedFaceChanged, out UnityEngine.UI.Slider _, true);
-            addBlank(menu);
+            AddBlank(menu);
             void DebugModeChanged(bool val) {
                 DebugMode.Value = val;
             }

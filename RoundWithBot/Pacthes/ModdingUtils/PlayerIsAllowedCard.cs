@@ -10,7 +10,7 @@ namespace RoundsWithBots.Pacthes.ModdingUtils {
         [HarmonyPatch("PlayerIsAllowedCard")]
         [HarmonyPostfix]
         public static void Postfix(Player player, CardInfo card, ref bool __result, Cards __instance) {
-            if(card.blacklistedCategories.Contains(CustomCardCategories.instance.CardCategory("NotForBots"))) __result = false;
+            if(player.GetComponent<PlayerAPI>().enabled && card.blacklistedCategories.Contains(CustomCardCategories.instance.CardCategory("NotForBots"))) __result = false;
         }
     }
 }
