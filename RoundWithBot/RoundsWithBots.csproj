@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <None Include="..\README.md" />
-    <None Include="..\.gitignore" />
+		<None Include="..\.gitignore" Link="Solution\.gitignore" />
+		<None Include="..\README.md" Link="Solution\README.md" />
+		
+		<None Include="..\public.py" Link="Solution\public.py" />
+		<None Include="..\manifest.json" Link="Solution\manifest.json" />
+		
   </ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
