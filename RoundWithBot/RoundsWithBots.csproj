@@ -41,6 +41,8 @@
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
 		
     <TargetFramework>netstandard2.1</TargetFramework>
+		
+    <AssemblyVersion>2.3.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -104,5 +106,8 @@
       <HintPath>$(ManagedFolder)\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
-
+	
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="py ../public.py $(TargetPath) $(AssemblyVersion)" />
+	</Target>
 </Project>
