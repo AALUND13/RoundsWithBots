@@ -9,7 +9,7 @@ namespace RoundsWithBots.Pacthes {
         [HarmonyPatch("CreatePlayer")]
         public static bool Prefix(PlayerAssigner __instance, InputDevice inputDevice, bool isAI, ref IEnumerator __result) {
             if(isAI 
-                && GameManager.instance.battleOngoing 
+                && GameManager.instance.isPlaying 
                 && !AIMinionHandler.sandbox
             ) {
                 __result = EmptyEnumerator();
