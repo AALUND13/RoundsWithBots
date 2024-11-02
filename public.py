@@ -40,6 +40,9 @@ if not os.path.exists(exportedDLLPath):
     print("Error: DLL not found, Please build the project first")
     sys.exit(1)
 
+assemblyBuildName = os.path.splitext(os.path.basename(exportedDLLPath))[0]
+buildSybol = os.path.join(DLLBuildDir, f"{assemblyBuildName}.pdb")
+
 # Update the version in the manifest
 writeNewManifest(manifestPath, version)
 
@@ -56,6 +59,8 @@ shutil.copy(iconPath, publicDir)
 shutil.copy(manifestPath, publicDir)
 shutil.copy(readmePath, publicDir)
 shutil.copy(exportedDLLPath, publicDir)
+if os.path.exists(buildSybol):
+    shutil.copy(buildSybol, publicDir)
 
 # Zip the directory
 shutil.make_archive(os.path.splitext(exportedDLLPath)[0], 'zip', publicDir)
