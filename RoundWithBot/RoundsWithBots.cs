@@ -1,7 +1,10 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using Photon.Pun;
+using RoundsWithBots.Menu;
 using RoundsWithBots.Utils;
-using System.Collections.Generic;
+using UnboundLib;
+using UnboundLib.Networking;
 using UnboundLib.Utils;
 using UnityEngine;
 
@@ -20,9 +23,6 @@ namespace RoundsWithBots {
 
         public static RoundsWithBots Instance { get; private set; }
         public bool IsPicking = false;
-        private List<int> BotPlayer = new List<int>();
-
-
 
         void Awake() {
             var harmony = new Harmony(ModId);
@@ -31,13 +31,28 @@ namespace RoundsWithBots {
         void Start() {
             Instance = this;
 
-            ConfigHandler.RegesterMenu(ModName, Config);
+            RWBMenu.RegisterMenu(ModName, Config);
+
+            Unbound.RegisterHandshake(ModId, OnHandShakeCompleted);
 
             CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Remote"));
             CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Teleport"));
             CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Shield Charge"));
 
             BotAIManager.Instance = new GameObject($"{ModInitials}_BotAIManager").AddComponent<BotAIManager>();
+        }
+
+        private void OnHandShakeCompleted() {
+            if (PhotonNetwork.IsMasterClient) {
+                NetworkingManager.RPC_Others(GetType(), nameof(SyncSettings), RWBMenu.StalemateTimer.Value, RWBMenu.StalemateDamageCooldown.Value, RWBMenu.StalemateDamageDuration.Value);
+            }
+        }
+
+        [UnboundRPC]
+        private static void SyncSettings(float stalemateTimer, float stalemateDamageCooldown, float stalemateDamageDuration) {
+            RWBMenu.StalemateTimer.Value = stalemateTimer;
+            RWBMenu.StalemateDamageCooldown.Value = stalemateDamageCooldown;
+            RWBMenu.StalemateDamageDuration.Value = stalemateDamageDuration;
         }
     }
 }

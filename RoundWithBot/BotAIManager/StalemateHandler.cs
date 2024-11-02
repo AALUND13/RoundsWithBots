@@ -1,6 +1,7 @@
 ﻿using ModdingUtils.Utils;
 using Photon.Pun;
 using RoundsWithBots.Extensions;
+using RoundsWithBots.Menu;
 using RWF;
 using System.Collections;
 using System.Linq;
@@ -10,10 +11,6 @@ using UnityEngine;
 
 namespace RoundsWithBots {
     internal static class StalemateHandler {
-        internal const float stalemateCooldown = 10f;
-        internal const float stalemateDamageCooldown = 1f;
-        internal const float stalemateDamageDuration = 10f;
-
         public static bool IsStalemate {
             get {
                 bool isPlayersAlive = PlayerManager.instance.players
@@ -31,10 +28,10 @@ namespace RoundsWithBots {
                     yield return new WaitForSeconds(0.5f);
                 }
 
-                yield return new WaitForSeconds(stalemateCooldown);
+                yield return new WaitForSeconds(RWBMenu.StalemateTimer.Value);
 
                 while(IsStalemate) {
-                    yield return new WaitForSeconds(stalemateDamageCooldown);
+                    yield return new WaitForSeconds(RWBMenu.StalemateDamageCooldown.Value);
 
                     Player[] aliveBots = PlayerManager.instance.players
                         .Where(player => PlayerStatus.PlayerAliveAndSimulated(player))
@@ -46,7 +43,7 @@ namespace RoundsWithBots {
                     }
 
                     Player player = aliveBots[Random.Range(0, aliveBots.Length)];
-                    NetworkingManager.RPC(typeof(StalemateHandler), nameof(RPCA_SendTakeDamageOverTime), player.data.view.ControllerActorNr, player.playerID, player.data.maxHealth, stalemateDamageDuration);
+                    NetworkingManager.RPC(typeof(StalemateHandler), nameof(RPCA_SendTakeDamageOverTime), player.data.view.ControllerActorNr, player.playerID, player.data.maxHealth, RWBMenu.StalemateDamageDuration.Value);
                 }
             }
             yield break;

@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using InControl;
 using RoundsWithBots.Extensions;
+using RoundsWithBots.Menu;
 using UnboundLib;
 using UnityEngine;
 
@@ -19,10 +20,10 @@ namespace RoundsWithBots.Pacthes {
             }
 
             if(pickingPlayer.GetComponent<PlayerAPI>().enabled) {
-                if(ConfigHandler.RandomizationFace.Value) {
+                if(RWBMenu.RandomizationFace.Value) {
                     __instance.currentlySelectedFace = Random.Range(0, 7);
                 } else {
-                    __instance.currentlySelectedFace = ConfigHandler.SelectedFace.Value;
+                    __instance.currentlySelectedFace = RWBMenu.SelectedFace.Value;
                 }
             }
         }

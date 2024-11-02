@@ -122,7 +122,7 @@ namespace RoundsWithBots {
             yield return new WaitForSeconds(pickDelay);
 
             PickCard(spawnCards);
-
+            
             yield break;
         }
 
