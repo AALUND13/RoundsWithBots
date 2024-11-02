@@ -1,8 +1,7 @@
-﻿using CardChoiceSpawnUniqueCardPatch.CustomCategories;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Photon.Pun;
-using Photon.Realtime;
 using RoundsWithBots.CardPickerAIs;
+using RoundsWithBots.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +9,7 @@ using UnboundLib;
 using UnboundLib.Networking;
 using UnityEngine;
 
-namespace RoundsWithBots.Utils
-{
+namespace RoundsWithBots {
     public partial class BotAIManager {
         public float initialDelay = 0.25f;
         public float cycleDelay = 0.3f;
@@ -43,6 +41,7 @@ namespace RoundsWithBots.Utils
                 index++;
                 yield return new WaitForSeconds(delay);
             }
+            LoggingUtils.Log("Successfully gone through all cards");
             yield break;
         }
         public IEnumerator GoToCards(GameObject selectedCards, List<GameObject> spawnedCards, float delay) {

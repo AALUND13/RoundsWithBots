@@ -1,23 +1,20 @@
-﻿using CardChoiceSpawnUniqueCardPatch.CustomCategories;
-using HarmonyLib;
-using Photon.Realtime;
 ﻿using ModdingUtils.GameModes;
 using RoundsWithBots.CardPickerAIs;
-using RoundsWithBots.Utils.CardPickerAIs;
-using System.Collections;
 using RoundsWithBots.Extensions;
 using RoundsWithBots.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using UnboundLib;
+using TMPro;
 using UnityEngine;
 
 namespace RoundsWithBots {
-    public partial class BotAIManager : MonoBehaviour, IPlayerPickStartHookHandler, IGameStartHookHandler {
+    public partial class BotAIManager : MonoBehaviour, IPlayerPickStartHookHandler, IGameStartHookHandler, IPointStartHookHandler {
         public static BotAIManager Instance;
 
         public ICardPickerAI defaultCardPickerAI = new RarestCardPicker();
         public Dictionary<int, ICardPickerAI> BotPickerAIs = new Dictionary<int, ICardPickerAI>();
+
+        private Coroutine stalemateHandlerCoroutine;
 
         void Start() {
             InterfaceGameModeHooksManager.instance.RegisterHooks(this);
@@ -40,6 +37,7 @@ namespace RoundsWithBots {
             botsIds.ForEach(id => LoggingUtils.Log($"Bot '{id}' has been added to the list of bots id."));
             LoggingUtils.Log("Successfully get list of bots player.");
         }
+
         public void OnPlayerPickStart() {
             StartCoroutine(Instance.AiPickCard());
         }
@@ -50,6 +48,14 @@ namespace RoundsWithBots {
                 Player player = PlayerManager.instance.players.First(p => p.playerID == bot.Key);
                 player.GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>().text = "<#07e0f0>[BOT]";
             }
+        }
+
+        public void OnPointStart() {
+            if(stalemateHandlerCoroutine != null) {
+                StopCoroutine(stalemateHandlerCoroutine);
+            }
+
+            stalemateHandlerCoroutine = StartCoroutine(StalemateHandler.HandleStalemate());
         }
     }
 }

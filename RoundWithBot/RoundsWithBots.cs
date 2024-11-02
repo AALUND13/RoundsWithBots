@@ -1,10 +1,7 @@
 ﻿using BepInEx;
-using CardChoiceSpawnUniqueCardPatch.CustomCategories;
 using HarmonyLib;
 using RoundsWithBots.Utils;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnboundLib.Utils;
 using UnityEngine;
 
@@ -38,7 +35,6 @@ namespace RoundsWithBots {
             ConfigHandler.RegesterMenu(ModName, Config);
 
             CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Remote"));
-            
 
             BotAIManager.Instance = new GameObject($"{ModInitials}_BotAIManager").AddComponent<BotAIManager>();
         }
