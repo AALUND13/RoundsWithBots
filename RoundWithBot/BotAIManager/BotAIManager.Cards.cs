@@ -19,12 +19,12 @@ namespace RoundsWithBots.Utils
         public float pickDelay = 0.5f;
 
         public List<GameObject> GetSpawnCards() {
-            Logger.Log("Getting spawn cards");
+            LoggingUtils.Log("Getting spawn cards");
             return (List<GameObject>)AccessTools.Field(typeof(CardChoice), "spawnedCards").GetValue(CardChoice.instance);
         }
 
         public IEnumerator CycleThroughCards(float delay, List<GameObject> spawnedCards) {
-            Logger.Log("Cycling through cards");
+            LoggingUtils.Log("Cycling through cards");
 
             CardInfo lastCardInfo = null;
             int index = 0;
@@ -32,7 +32,7 @@ namespace RoundsWithBots.Utils
             foreach(var cardObject in spawnedCards) {
                 CardInfo cardInfo = cardObject.GetComponent<CardInfo>();
 
-                Logger.Log($"Cycling through '${cardInfo.cardName}' card");
+                LoggingUtils.Log($"Cycling through '${cardInfo.cardName}' card");
                 if(lastCardInfo != null) {
                     lastCardInfo.RPCA_ChangeSelected(false);
                 }
@@ -43,11 +43,10 @@ namespace RoundsWithBots.Utils
                 index++;
                 yield return new WaitForSeconds(delay);
             }
-            Logger.Log("Successfully gone through all cards");
             yield break;
         }
         public IEnumerator GoToCards(GameObject selectedCards, List<GameObject> spawnedCards, float delay) {
-            Logger.Log($"Going to '${selectedCards}' card");
+            LoggingUtils.Log($"Going to '${selectedCards}' card");
 
             // Set currentlySelectedCard to the index of the selected card within the spawnedCards list
             int selectedCardIndex = spawnedCards.IndexOf(selectedCards);
@@ -56,7 +55,7 @@ namespace RoundsWithBots.Utils
             while(handIndex != selectedCardIndex) {
                 CardInfo cardInfo = spawnedCards[handIndex].GetComponent<CardInfo>();
                 cardInfo.RPCA_ChangeSelected(false);
-                Logger.Log($"Currently on '${cardInfo}' card");
+                LoggingUtils.Log($"Currently on '${cardInfo}' card");
                 if(handIndex > selectedCardIndex) {
                     handIndex--;
                 } else if(handIndex < selectedCardIndex) {
@@ -69,7 +68,7 @@ namespace RoundsWithBots.Utils
                 // Wait for some time before the next iteration
                 yield return new WaitForSeconds(delay);
             }
-            Logger.Log($"Successfully got to '${selectedCards}' card");
+            LoggingUtils.Log($"Successfully got to '${selectedCards}' card");
             yield break;
         }
 
@@ -88,7 +87,7 @@ namespace RoundsWithBots.Utils
                 for(int i = 0; i < PlayerManager.instance.players.Count; i++) {
                     Player player = PlayerManager.instance.players[i];
                     if(BotPickerAIs.ContainsKey(CardChoice.instance.pickrID)) {
-                        Logger.Log("AI picking card");
+                        LoggingUtils.Log("AI picking card");
                         List<GameObject> spawnCards = GetSpawnCards();
                         spawnCards[0].GetComponent<CardInfo>().GetComponent<PhotonView>().RPC("RPCA_ChangeSelected", RpcTarget.All, true);
 
@@ -103,7 +102,7 @@ namespace RoundsWithBots.Utils
         }
         public void StartCardsPicking(List<GameObject> spawnCards, ICardPickerAI botCardPickerAI) {
             if(botCardPickerAI == null) {
-                Logger.Log("Bot card picker AI is null, Skipping card picking");
+                LoggingUtils.Log("Bot card picker AI is null, Skipping card picking");
                 return;
             }
 

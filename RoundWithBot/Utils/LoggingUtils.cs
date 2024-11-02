@@ -1,5 +1,5 @@
 ﻿namespace RoundsWithBots.Utils {
-    public static class Logger {
+    public static class LoggingUtils {
         public static void Log(string message) {
             if(ConfigHandler.DebugMode.Value) {
                 UnityEngine.Debug.Log(message);

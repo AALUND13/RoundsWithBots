@@ -27,7 +27,7 @@ namespace RoundsWithBots.Utils
         public Dictionary<int, ICardPickerAI> BotPickerAIs = new Dictionary<int, ICardPickerAI>();
 
         public void SetBotsId() {
-            Logger.Log("Getting bots player.");
+            LoggingUtils.Log("Getting bots player.");
 
             BotPickerAIs.Clear();
             List<int> botsIds = PlayerManager.instance.players
@@ -37,8 +37,8 @@ namespace RoundsWithBots.Utils
 
             BotPickerAIs = botsIds.ToDictionary(id => id, id => defaultCardPickerAI);
 
-            botsIds.ForEach(id => Logger.Log($"Bot '{id}' has been added to the list of bots id."));
-            Logger.Log("Successfully get list of bots player.");
+            botsIds.ForEach(id => LoggingUtils.Log($"Bot '{id}' has been added to the list of bots id."));
+            LoggingUtils.Log("Successfully get list of bots player.");
         }
     }
 }
