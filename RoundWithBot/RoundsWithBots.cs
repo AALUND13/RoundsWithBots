@@ -10,7 +10,6 @@ namespace RoundsWithBots {
     [BepInDependency("pykess.rounds.plugins.moddingutils", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("pykess.rounds.plugins.cardchoicespawnuniquecardpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("io.olavim.rounds.rwf", BepInDependency.DependencyFlags.HardDependency)]
-    [BepInDependency("pykess.rounds.plugins.teleportpatch", BepInDependency.DependencyFlags.HardDependency)]
 
     [BepInPlugin(ModId, ModName, Version), BepInProcess("Rounds.exe")]
     public class RoundsWithBots : BaseUnityPlugin {
@@ -35,6 +34,8 @@ namespace RoundsWithBots {
             ConfigHandler.RegesterMenu(ModName, Config);
 
             CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Remote"));
+            CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Teleport"));
+            CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Shield Charge"));
 
             BotAIManager.Instance = new GameObject($"{ModInitials}_BotAIManager").AddComponent<BotAIManager>();
         }
