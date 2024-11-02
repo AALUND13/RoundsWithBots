@@ -8,25 +8,8 @@
 		
   </ItemGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DebugSymbols>true</DebugSymbols>
-		<DebugType>embedded</DebugType>
-		<PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
-		<Optimize>false</Optimize>
-		<DefineConstants>DEBUG</DefineConstants>
-		<OutputPath>bin\Debug\</OutputPath>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	</PropertyGroup>
-
 	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-		<OutputType>Library</OutputType>
-		<Authors>RoundsModding</Authors>
-		<TargetFramework>net461</TargetFramework>
-		<FileAlignment>512</FileAlignment>
-		<Deterministic>true</Deterministic>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<TargetFramework>netstandard2.1</TargetFramework>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -34,7 +17,12 @@
     <EmbeddedResource Remove="Patches\**" />
     <None Remove="Patches\**" />
   </ItemGroup>
-  
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugTypee>full</DebugTypee>
+	</PropertyGroup>
+	
   <PropertyGroup>
 		<RoundsFolder>C:\Program Files (x86)\Steam\steamapps\common\ROUNDS</RoundsFolder>
     <ManagedFolder>$(RoundsFolder)\ROUNDS_Data\Managed</ManagedFolder>
@@ -43,8 +31,6 @@
 		
 		<IndirectBuildTask>true</IndirectBuildTask>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
-		
-    <TargetFramework>netstandard2.1</TargetFramework>
 		
     <AssemblyVersion>2.3.0</AssemblyVersion>
   </PropertyGroup>
