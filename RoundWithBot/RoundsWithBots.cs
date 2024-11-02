@@ -5,8 +5,8 @@ using RoundsWithBots.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnboundLib.GameModes;
 using UnboundLib.Utils;
+using UnityEngine;
 
 namespace RoundsWithBots {
     [BepInDependency("com.willis.rounds.unbound", BepInDependency.DependencyFlags.HardDependency)]
@@ -39,27 +39,8 @@ namespace RoundsWithBots {
 
             CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Remote"));
             
-            GameModeManager.AddHook(GameModeHooks.HookPlayerPickStart, (_) => BotPicks());
-            GameModeManager.AddHook(GameModeHooks.HookGameStart, (_) => RegisterBots());
-        }
 
-        IEnumerator RegisterBots() {
-            BotPlayer.Clear();
-            for(int i = 0; i < PlayerManager.instance.players.Count; i++) {
-                Player player = PlayerManager.instance.players[i];
-                if(player.GetComponent<PlayerAPI>().enabled) {
-                    BotPlayer.Add(player.playerID);
-                    player.GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>().text = "<#07e0f0>[BOT]";
-                }
-            }
-            BotAIManager.instance.SetBotsId();
-
-            yield break;
-        }
-        IEnumerator BotPicks() {
-            StartCoroutine(BotAIManager.instance.AiPickCard());
-
-            yield break;
+            BotAIManager.Instance = new GameObject($"{ModInitials}_BotAIManager").AddComponent<BotAIManager>();
         }
     }
 }

@@ -129,7 +129,7 @@ namespace RoundsWithBots.Utils
 
         [UnboundRPC]
         public static void RPCA_PickCardsAtPosition(int position) {
-            instance.StartCoroutine(instance.PickCardsAtPosition(position));
+            Instance.StartCoroutine(Instance.PickCardsAtPosition(position));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using InControl;
+using RoundsWithBots.Extensions;
 using UnboundLib;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ namespace RoundsWithBots.Pacthes {
             MonoBehaviour playerAI = pickingPlayer.GetComponentInChildren<PlayerAI>() ?? (MonoBehaviour)pickingPlayer.GetComponentInChildren<PlayerAIZorro>();
             if(playerAI != null) {
                 playerAI.gameObject.AddComponent<PlayerAIPhilip>();
+                playerAI.GetComponentInParent<CharacterData>().GetAdditionalData().IsBot = true;
+
                 Object.Destroy(playerAI);
             }
 
