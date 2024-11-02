@@ -1,6 +1,7 @@
 ﻿using CardChoiceSpawnUniqueCardPatch.CustomCategories;
 using HarmonyLib;
 using Photon.Realtime;
+using RoundsWithBots.CardPickerAIs;
 using RoundsWithBots.Utils.CardPickerAIs;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +9,8 @@ using System.Linq;
 using UnboundLib;
 using UnityEngine;
 
-namespace RoundsWithBots.Utils {
+namespace RoundsWithBots.Utils
+{
     public partial class BotAIManager : MonoBehaviour {
         private static BotAIManager _instance;
         public static BotAIManager instance {

@@ -2,7 +2,7 @@
 using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
-using RoundsWithBots.Utils.CardPickerAIs;
+using RoundsWithBots.CardPickerAIs;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,8 @@ using UnboundLib;
 using UnboundLib.Networking;
 using UnityEngine;
 
-namespace RoundsWithBots.Utils {
+namespace RoundsWithBots.Utils
+{
     public partial class BotAIManager {
         public float initialDelay = 0.25f;
         public float cycleDelay = 0.3f;

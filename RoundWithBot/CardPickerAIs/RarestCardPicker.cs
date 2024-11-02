@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace RoundsWithBots.Utils.CardPickerAIs {
-    public class RarestCardPicker : ICardPickerAI {
-        public List<CardInfo> PickCard(List<CardInfo> cards) {
+namespace RoundsWithBots.CardPickerAIs
+{
+    public class RarestCardPicker : ICardPickerAI
+    {
+        public List<CardInfo> PickCard(List<CardInfo> cards)
+        {
             var rarestCards = cards
                 .GroupBy(card => card.rarity)
                 .OrderBy(group => group.Key)
