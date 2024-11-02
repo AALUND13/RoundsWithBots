@@ -37,10 +37,10 @@ namespace RoundsWithBots.Menu {
         }
 
         private static void CreateRWBMenu(GameObject mainMenu) {
-            MenuHandler.CreateText("Rounds With Bots", mainMenu, out TextMeshProUGUI _, 70);
+            MenuHandler.CreateText("<b>Rounds With Bots", mainMenu, out TextMeshProUGUI _, 70);
             AddBlank(mainMenu, 50);
 
-            CreateFacesMenu(mainMenu);
+            CreateDetailsMenu(mainMenu);
             AddBlank(mainMenu, 20);
 
             CreateStalemateMenu(mainMenu);
@@ -49,7 +49,7 @@ namespace RoundsWithBots.Menu {
             MenuHandler.CreateToggle(DebugMode.Value, "<#c41010>Debug Mode", mainMenu, value => DebugMode.Value = value, 30);
         }
 
-        public static void AddBlank(GameObject menu, int size = 30) {
+        private static void AddBlank(GameObject menu, int size = 30) {
             MenuHandler.CreateText(" ", menu, out TextMeshProUGUI _, size);
         }
     }

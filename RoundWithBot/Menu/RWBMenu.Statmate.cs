@@ -30,7 +30,7 @@ namespace RoundsWithBots.Menu {
         private static void CreateStalemateMenu(GameObject mainMenu) {
             GameObject stalemateMenu = MenuHandler.CreateMenu("Stalemate Options", () => { }, mainMenu, 40, parentForMenu: mainMenu.transform.parent.gameObject);
 
-            MenuHandler.CreateText("Rounds With Bots | Stalemate Options", stalemateMenu, out TextMeshProUGUI _, 70);
+            MenuHandler.CreateText("<b>Rounds With Bots | Stalemate Options", stalemateMenu, out TextMeshProUGUI _, 70);
             AddBlank(stalemateMenu, 50);
 
             MenuHandler.CreateSlider("Stalemate Timer", stalemateMenu, 30, 0, 60, StalemateTimer.Value, value => StalemateTimer.Value = Mathf.Round(value), out UnityEngine.UI.Slider _, true);
