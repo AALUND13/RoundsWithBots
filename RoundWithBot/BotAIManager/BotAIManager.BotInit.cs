@@ -31,7 +31,7 @@ namespace RoundsWithBots.Utils
 
             BotPickerAIs.Clear();
             List<int> botsIds = PlayerManager.instance.players
-                     .Where(player => player.GetComponent<PlayerAPI>().enabled)
+                     .Where(player => player.data.GetAdditionalData().IsBot)
                      .Select(player => player.playerID)
                      .ToList();
 
