@@ -11,6 +11,7 @@ using UnboundLib.Networking;
 using UnityEngine;
 
 namespace RoundsWithBots {
+
     public partial class BotAIManager {
         public List<GameObject> GetSpawnCards() {
             LoggingUtils.Log("Getting spawn cards");
@@ -81,13 +82,13 @@ namespace RoundsWithBots {
 
                 for(int i = 0; i < PlayerManager.instance.players.Count; i++) {
                     Player player = PlayerManager.instance.players[i];
-                    if(BotPickerAIs.ContainsKey(CardChoice.instance.pickrID)) {
+                    if(PickerAIs.ContainsKey(CardChoice.instance.pickrID)) {
                         LoggingUtils.Log("AI picking card");
                         List<GameObject> spawnCards = GetSpawnCards();
                         spawnCards[0].GetComponent<CardInfo>().GetComponent<PhotonView>().RPC("RPCA_ChangeSelected", RpcTarget.All, true);
 
-                        ICardPickerAI botCardPickerAI = BotPickerAIs[CardChoice.instance.pickrID];
-                        StartCardsPicking(spawnCards, botCardPickerAI);
+                        ICardPickerAI botCardPickerAI = PickerAIs[CardChoice.instance.pickrID].cardPickerAI;
+                        StartCardsPicking(spawnCards, botCardPickerAI, PickerAIs[CardChoice.instance.pickrID].pickerInfo);
 
                         break;
                     }
@@ -95,7 +96,8 @@ namespace RoundsWithBots {
                 yield break;
             }
         }
-        public void StartCardsPicking(List<GameObject> spawnCards, ICardPickerAI botCardPickerAI) {
+
+        public void StartCardsPicking(List<GameObject> spawnCards, ICardPickerAI botCardPickerAI, PickerInfo pickerInfo) {
             if(botCardPickerAI == null) {
                 LoggingUtils.Log("Bot card picker AI is null, Skipping card picking");
                 return;
@@ -107,26 +109,62 @@ namespace RoundsWithBots {
             CardInfo pickCard = pickCards.ElementAt(Random.Range(0, pickCards.Count));
             int pickCardIndex = cards.IndexOf(pickCard);
 
-            NetworkingManager.RPC(typeof(BotAIManager), nameof(RPCA_PickCardsAtPosition), pickCardIndex);
+            NetworkingManager.RPC(typeof(BotAIManager), nameof(RPCA_PickCardsAtPosition), pickCardIndex, pickerInfo.CycleDelay, pickerInfo.PreCycleDelay, pickerInfo.GoToCardDelay, pickerInfo.PickDelay);
         }
 
-        private IEnumerator PickCardsAtPosition(int position) {
+        private IEnumerator PickCardsAtPosition(int position, float cycleDelay, float preCycleDelay, float goToCardDelay, float pickDelay) {
             List<GameObject> spawnCards = GetSpawnCards();
 
-            yield return CycleThroughCards(RWBMenu.CycleDelay.Value, spawnCards);
-            yield return new WaitForSeconds(RWBMenu.PreCycleDelay.Value);
+            yield return CycleThroughCards(cycleDelay, spawnCards);
+            yield return new WaitForSeconds(preCycleDelay);
 
-            yield return GoToCards(spawnCards[position], spawnCards, RWBMenu.GoToCardDelay.Value);
-            yield return new WaitForSeconds(RWBMenu.PickDelay.Value);
+            yield return GoToCards(spawnCards[position], spawnCards, goToCardDelay);
+            yield return new WaitForSeconds(pickDelay);
 
             PickCard(spawnCards);
-            
+
             yield break;
         }
 
         [UnboundRPC]
-        public static void RPCA_PickCardsAtPosition(int position) {
-            Instance.StartCoroutine(Instance.PickCardsAtPosition(position));
+        private static void RPCA_PickCardsAtPosition(int position, float cycleDelay, float preCycleDelay, float goToCardDelay, float pickDelay) {
+            Instance.StartCoroutine(Instance.PickCardsAtPosition(position, cycleDelay, preCycleDelay, goToCardDelay, pickDelay));
+        }
+    }
+
+    public class PickerInfo {
+        public float CycleDelay;
+        public float PreCycleDelay;
+        public float GoToCardDelay;
+        public float PickDelay;
+
+        public PickerInfo(float cycleDelay, float preCycleDelay, float goToCardDelay, float pickDelay) {
+            CycleDelay = cycleDelay;
+            PreCycleDelay = preCycleDelay;
+            GoToCardDelay = goToCardDelay;
+            PickDelay = pickDelay;
+        }
+
+        public PickerInfo() {
+            CycleDelay = RWBMenu.CycleDelay.Value;
+            PreCycleDelay = RWBMenu.PreCycleDelay.Value;
+            GoToCardDelay = RWBMenu.GoToCardDelay.Value;
+            PickDelay = RWBMenu.PickDelay.Value;
+        }
+    }
+
+    public class CardPickerAI {
+        public ICardPickerAI cardPickerAI;
+        public PickerInfo pickerInfo;
+
+        public CardPickerAI(ICardPickerAI cardPickerAI, PickerInfo pickerInfo) {
+            this.cardPickerAI = cardPickerAI;
+            this.pickerInfo = pickerInfo;
+        }
+
+        public CardPickerAI() {
+            cardPickerAI = new RarestCardPicker();
+            pickerInfo = new PickerInfo();
         }
     }
 }
