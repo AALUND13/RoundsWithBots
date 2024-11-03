@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using Photon.Pun;
 using RoundsWithBots.CardPickerAIs;
+using RoundsWithBots.Menu;
 using RoundsWithBots.Utils;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,11 +12,6 @@ using UnityEngine;
 
 namespace RoundsWithBots {
     public partial class BotAIManager {
-        public float initialDelay = 0.25f;
-        public float cycleDelay = 0.3f;
-        public float goToDelay = 0.2f;
-        public float pickDelay = 0.5f;
-
         public List<GameObject> GetSpawnCards() {
             LoggingUtils.Log("Getting spawn cards");
             return (List<GameObject>)AccessTools.Field(typeof(CardChoice), "spawnedCards").GetValue(CardChoice.instance);
@@ -117,9 +113,11 @@ namespace RoundsWithBots {
         private IEnumerator PickCardsAtPosition(int position) {
             List<GameObject> spawnCards = GetSpawnCards();
 
-            yield return CycleThroughCards(cycleDelay, spawnCards);
-            yield return GoToCards(spawnCards[position], spawnCards, goToDelay);
-            yield return new WaitForSeconds(pickDelay);
+            yield return CycleThroughCards(RWBMenu.CycleDelay.Value, spawnCards);
+            yield return new WaitForSeconds(RWBMenu.PreCycleDelay.Value);
+
+            yield return GoToCards(spawnCards[position], spawnCards, RWBMenu.GoToCardDelay.Value);
+            yield return new WaitForSeconds(RWBMenu.PickDelay.Value);
 
             PickCard(spawnCards);
             

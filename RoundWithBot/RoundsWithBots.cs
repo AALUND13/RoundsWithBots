@@ -43,16 +43,41 @@ namespace RoundsWithBots {
         }
 
         private void OnHandShakeCompleted() {
-            if (PhotonNetwork.IsMasterClient) {
-                NetworkingManager.RPC_Others(GetType(), nameof(SyncSettings), RWBMenu.StalemateTimer.Value, RWBMenu.StalemateDamageCooldown.Value, RWBMenu.StalemateDamageDuration.Value);
+            if(PhotonNetwork.IsMasterClient) {
+                NetworkingManager.RPC_Others(
+                    GetType(), 
+                    nameof(RPCA_SyncSettings), 
+
+                    RWBMenu.StalemateTimer.Value, 
+                    RWBMenu.StalemateDamageCooldown.Value, 
+                    RWBMenu.StalemateDamageDuration.Value,
+                    
+                    RWBMenu.CycleDelay.Value,
+                    RWBMenu.PreCycleDelay.Value,
+                    RWBMenu.GoToCardDelay.Value,
+                    RWBMenu.PickDelay.Value
+                );
             }
         }
 
         [UnboundRPC]
-        private static void SyncSettings(float stalemateTimer, float stalemateDamageCooldown, float stalemateDamageDuration) {
+        private static void RPCA_SyncSettings(
+            float stalemateTimer, 
+            float stalemateDamageCooldown, 
+            float stalemateDamageDuration, 
+            float cycleDelay, 
+            float preCycleDelay, 
+            float goToCardDelay, 
+            float pickDelay
+        ) {
             RWBMenu.StalemateTimer.Value = stalemateTimer;
             RWBMenu.StalemateDamageCooldown.Value = stalemateDamageCooldown;
             RWBMenu.StalemateDamageDuration.Value = stalemateDamageDuration;
+
+            RWBMenu.CycleDelay.Value = cycleDelay;
+            RWBMenu.PreCycleDelay.Value = preCycleDelay;
+            RWBMenu.GoToCardDelay.Value = goToCardDelay;
+            RWBMenu.PickDelay.Value = pickDelay;
         }
     }
 }

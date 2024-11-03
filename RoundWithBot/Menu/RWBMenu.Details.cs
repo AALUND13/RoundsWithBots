@@ -36,7 +36,7 @@ namespace RoundsWithBots.Menu {
 
             AddBlank(facesMenu, 20);
 
-            SelectedFaceObject = MenuHandler.CreateSlider("Selected Bot Face", facesMenu, 30, 0, 7, SelectedFace.Value, value => SelectedFace.Value = (int)Math.Round(value), out UnityEngine.UI.Slider _, true);
+            SelectedFaceObject = MenuHandler.CreateSlider("Selected Bot Face", facesMenu, 30, 0, 7, SelectedFace.Value, value => SelectedFace.Value = (int)value, out UnityEngine.UI.Slider _, true);
             SelectedFaceObject.SetActive(!RandomizationFace.Value);
         }
     }

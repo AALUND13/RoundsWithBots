@@ -18,7 +18,7 @@ namespace RoundsWithBots {
 
         void Start() {
             InterfaceGameModeHooksManager.instance.RegisterHooks(this);
-
+            
             DontDestroyOnLoad(this);
             Instance = this;
         }
