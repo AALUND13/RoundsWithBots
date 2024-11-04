@@ -96,7 +96,15 @@
     </Reference>
   </ItemGroup>
 	
+	<Target Name="CheckPythonInstalled" BeforeTargets="BeforeBuild">
+		<Exec Command="py --version" IgnoreExitCode="true">
+			<Output TaskParameter="ExitCode" PropertyName="PythonExitCode" />
+		</Exec>
+
+		<Error Condition="'$(PythonExitCode)' != '0'" Text="Python is not installed or not found in PATH. Please install Python to proceed." />
+	</Target>
+	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="py ../public.py $(TargetPath) $(AssemblyVersion)" />
+		<Exec Command="py ../public.py &quot;$(TargetPath)&quot; $(AssemblyVersion)" />
 	</Target>
 </Project>

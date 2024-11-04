@@ -1,66 +1,82 @@
-import sys, os, shutil, json
+import sys
+import os
+import shutil
+import json
 
-def writeNewManifest(manifestPath, version=None):
+def write_new_manifest(manifest_path, version=None):
     if version:
-        with open(manifestPath, "r") as file:
+        with open(manifest_path, "r") as file:
             manifest = json.load(file)
             manifest["version_number"] = version
 
-        with open(manifestPath, "w") as file:
+        with open(manifest_path, "w") as file:
             json.dump(manifest, file, indent=4)
 
-exportedDLLPath = sys.argv[1]
+def package(public_dir, dll_build_dir, exported_dll_path, icon_path, manifest_path, readme_path, build_symbol_path):
+    # If the directory doesn't exist, create it. If it does exist, delete it and create a new one
+    if os.path.exists(public_dir):
+        shutil.rmtree(public_dir)
+    os.makedirs(public_dir)
 
-# If the version is not provided, default to 1.0.0
-version = None if len(sys.argv) < 3 else sys.argv[2]
+    # Copy the files
+    for file_path in [icon_path, manifest_path, readme_path, exported_dll_path]:
+        shutil.copy(file_path, public_dir)
 
-projectDir = os.path.dirname(os.path.realpath(__file__))
-DLLBuildDir = os.path.dirname(os.path.realpath(exportedDLLPath))
+    if os.path.exists(build_symbol_path):
+        shutil.copy(build_symbol_path, public_dir)
 
-iconPath = os.path.join(projectDir, "icon.png")
-manifestPath = os.path.join(projectDir, "manifest.json")
-readmePath = os.path.join(projectDir, "README.md")
+    # Zip the directory
+    output_zip_path = os.path.join(dll_build_dir, f"{os.path.splitext(os.path.basename(exported_dll_path))[0]}.zip")
+    shutil.make_archive(os.path.splitext(output_zip_path)[0], 'zip', public_dir)
 
-publicDir = os.path.join(DLLBuildDir, "public")
+    print(f"Build successfully archived at: {output_zip_path}")
 
-# Check if the files exist
-if not os.path.exists(iconPath):
-    print("Error: icon.png not found, Please include an icon.png file")
-    sys.exit(1)
+def unpackage(zip_path, extract_to):
+    if not os.path.exists(zip_path):
+        print(f"Error: Zip file '{zip_path}' not found.")
+        sys.exit(1)
 
-if not os.path.exists(manifestPath):
-    print("Error: manifest.json not found, Please include a manifest.json file")
-    sys.exit(1)
+    if not os.path.exists(extract_to):
+        os.makedirs(extract_to)
 
-if not os.path.exists(readmePath):
-    print("Error: README.md not found, Please include a README.md file")
-    sys.exit(1)
+    shutil.unpack_archive(zip_path, extract_to)
+    print(f"Archive successfully unpackaged to: {extract_to}")
 
-if not os.path.exists(exportedDLLPath):
-    print("Error: DLL not found, Please build the project first")
-    sys.exit(1)
+def main():
+    if len(sys.argv) < 3:
+        print("Usage: script.py <exportedDLLPath> <version>")
+        sys.exit(1)
 
-assemblyBuildName = os.path.splitext(os.path.basename(exportedDLLPath))[0]
-buildSybol = os.path.join(DLLBuildDir, f"{assemblyBuildName}.pdb")
+    exported_dll_path = sys.argv[1]
+    version = sys.argv[2]
 
-# Update the version in the manifest
-writeNewManifest(manifestPath, version)
+    project_dir = os.path.dirname(os.path.realpath(__file__))
+    dll_build_dir = os.path.dirname(os.path.realpath(exported_dll_path))
 
-# If the directory doesn't exist, create it
-# If it does exist, delete it and create a new one
-if not os.path.exists(publicDir):
-    os.makedirs(publicDir)
-else:
-    shutil.rmtree(publicDir)
-    os.makedirs(publicDir)
+    icon_path = os.path.join(project_dir, "icon.png")
+    manifest_path = os.path.join(project_dir, "manifest.json")
+    readme_path = os.path.join(project_dir, "README.md")
 
-# Copy the files
-shutil.copy(iconPath, publicDir)
-shutil.copy(manifestPath, publicDir)
-shutil.copy(readmePath, publicDir)
-shutil.copy(exportedDLLPath, publicDir)
-if os.path.exists(buildSybol):
-    shutil.copy(buildSybol, publicDir)
+    public_dir = os.path.join(dll_build_dir, "public")
 
-# Zip the directory
-shutil.make_archive(os.path.splitext(exportedDLLPath)[0], 'zip', publicDir)
+    # Check if the files exist
+    missing_files = []
+    for path, name in [(icon_path, "icon.png"), (manifest_path, "manifest.json"), (readme_path, "README.md"), (exported_dll_path, "DLL")]:
+        if not os.path.exists(path):
+            missing_files.append(name)
+    
+    if missing_files:
+        print(f"Error: Missing required files: {', '.join(missing_files)}")
+        sys.exit(1)
+
+    assembly_build_name = os.path.splitext(os.path.basename(exported_dll_path))[0]
+    build_symbol_path = os.path.join(dll_build_dir, f"{assembly_build_name}.pdb")
+
+    # Update the version in the manifest
+    write_new_manifest(manifest_path, version)
+
+    # Package the files
+    package(public_dir, dll_build_dir, exported_dll_path, icon_path, manifest_path, readme_path, build_symbol_path)
+
+if __name__ == "__main__":
+    main()
