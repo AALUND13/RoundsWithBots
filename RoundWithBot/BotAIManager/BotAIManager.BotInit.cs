@@ -1,13 +1,17 @@
-﻿using ModdingUtils.GameModes;
+﻿using HarmonyLib;
+using ModdingUtils.GameModes;
 using RoundsWithBots.Extensions;
 using RoundsWithBots.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TMPro;
+using UnboundLib.GameModes;
 using UnityEngine;
 
 namespace RoundsWithBots {
-    public partial class BotAIManager : MonoBehaviour, IPlayerPickStartHookHandler, IGameStartHookHandler, IPointStartHookHandler {
+    public partial class BotAIManager : MonoBehaviour, IPlayerPickStartHookHandler, IGameStartHookHandler, IPointStartHookHandler, IRoundEndHookHandler {
         public static BotAIManager Instance;
 
         public Dictionary<int, CardPickerAI> PickerAIs = new Dictionary<int, CardPickerAI>();
@@ -54,6 +58,22 @@ namespace RoundsWithBots {
             }
 
             stalemateHandlerCoroutine = StartCoroutine(StalemateHandler.HandleStalemate());
+        }
+
+        public void OnRoundEnd() {
+            int maxRounds = (int)GameModeManager.CurrentHandler.Settings["roundsToWinGame"];
+            var teams = PlayerManager.instance.players.Select(p => p.teamID).Distinct();
+            int? winnerTeam = teams.Select(id => (int?)id).FirstOrDefault(id => GameModeManager.CurrentHandler.GetTeamScore(id.Value).rounds >= maxRounds);
+        
+            bool isAllBot = PlayerManager.instance.players.All(p => p.data.GetAdditionalData().IsBot
+                || ModdingUtils.AIMinion.Extensions.CharacterDataExtension.GetAdditionalData(p.data).isAIMinion);
+
+            if(winnerTeam != null && isAllBot) {
+                // Since the 'RoundEndHandler' is a internal class, we need to use 'AccessTools' to get the method.
+                Type type = AccessTools.TypeByName("RWF.RoundEndHandler");
+                object instance = type.GetField("instance", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+                type.GetMethod("OnGameOverChoose", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(instance, new object[] { "REMATCH" });
+            }
         }
     }
 }

@@ -5,7 +5,6 @@
 		
 		<None Include="..\public.py" Link="Solution\public.py" />
 		<None Include="..\manifest.json" Link="Solution\manifest.json" />
-		
   </ItemGroup>
 
 	<PropertyGroup>
