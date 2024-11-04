@@ -3,6 +3,7 @@ using ModdingUtils.GameModes;
 using RoundsWithBots.Extensions;
 using RoundsWithBots.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -69,6 +70,15 @@ namespace RoundsWithBots {
                 || ModdingUtils.AIMinion.Extensions.CharacterDataExtension.GetAdditionalData(p.data).isAIMinion);
 
             if(winnerTeam != null && isAllBot) {
+                StartCoroutine(Rematch());
+            }
+        }
+
+        public IEnumerator Rematch() {
+            yield return new WaitForSeconds(1f);
+
+            // Just to be safe, we check if the game is still playing, after the delay.
+            if(GameManager.instance.isPlaying) {
                 // Since the 'RoundEndHandler' is a internal class, we need to use 'AccessTools' to get the method.
                 Type type = AccessTools.TypeByName("RWF.RoundEndHandler");
                 object instance = type.GetField("instance", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
