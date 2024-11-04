@@ -11,14 +11,6 @@ namespace RoundsWithBots.Pacthes {
         [HarmonyPatch("StartPicking")]
         [HarmonyBefore("io.olavim.rounds.rwf")]
         public static void Postfix(CharacterSelectionInstance __instance, Player pickingPlayer) {
-            MonoBehaviour playerAI = pickingPlayer.GetComponentInChildren<PlayerAI>() ?? (MonoBehaviour)pickingPlayer.GetComponentInChildren<PlayerAIZorro>();
-            if(playerAI != null) {
-                playerAI.gameObject.AddComponent<PlayerAIPhilip>();
-                playerAI.GetComponentInParent<CharacterData>().GetAdditionalData().IsBot = true;
-
-                Object.Destroy(playerAI);
-            }
-
             if(pickingPlayer.GetComponent<PlayerAPI>().enabled) {
                 if(RWBMenu.RandomizationFace.Value) {
                     __instance.currentlySelectedFace = Random.Range(0, 7);
