@@ -1,7 +1,7 @@
 {
     "name": "RoundWithBots",
-    "version_number": "2.3.0",
-    "website_url": "https://github.com/AALUND13/RoundWithBot",
+    "version_number": "3.0.0",
+    "website_url": "https://github.com/AALUND13/RoundsWithBots",
     "description": "Tired of waiting for friends in Rounds or don't have friends who own the game? The RoundWithBot mod solves this by allowing you to play with AI bots. Simply press 'B' to activate the bot feature and 'R' to ready up, and enjoy Rounds anytime!",
     "dependencies": [
         "olavim-RoundsWithFriends-2.2.2",
