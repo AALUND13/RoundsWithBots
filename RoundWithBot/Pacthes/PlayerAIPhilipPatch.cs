@@ -8,8 +8,9 @@ namespace RoundsWithBots.Patches {
     [HarmonyPatch(typeof(PlayerAIPhilip))]
     internal class PlayerAIPhilipPatch {
         private const float maxDistance = 1.0f;
+        public static List<Collider2D> DamageBoxesColliders = new List<Collider2D>();
 
-        // This patch makes the AI use the shield when it is near the boundaries of the map.
+        // This patch makes the AI use the shield when it is near the boundaries of the map or near a damage box.
         [HarmonyPostfix]
         [HarmonyPatch("Update")]
         public static void UpdatePostfix(PlayerAIPhilip __instance) {
@@ -17,14 +18,24 @@ namespace RoundsWithBots.Patches {
 
             OutOfBoundsHandler outOfBoundsHandlerInstance = GameObject.FindObjectOfType<OutOfBoundsHandler>();
             Vector3 bound = (Vector3)AccessTools.Method(typeof(OutOfBoundsHandler), "GetPoint")
-                .Invoke(outOfBoundsHandlerInstance, new object[] { __instance.gameObject.transform.position });
+                .Invoke(outOfBoundsHandlerInstance, new object[] { __instance.transform.position });
 
-            float diffX = Mathf.Abs(__instance.gameObject.transform.position.x - bound.x);
-            float diffY = Mathf.Abs(__instance.gameObject.transform.position.y - bound.y);
+            float diffX = Mathf.Abs(__instance.transform.position.x - bound.x);
+            float diffY = Mathf.Abs(__instance.transform.position.y - bound.y);
             bool isNearBoundaries = (diffX <= maxDistance || diffY <= maxDistance) && (diffX >= maxDistance || diffY >= maxDistance);
 
             if(isNearBoundaries) {
                 input.shieldWasPressed = true;
+            }
+
+            foreach(var damageBoxCollider in DamageBoxesColliders) {
+                Vector2 closestPoint = damageBoxCollider.bounds.ClosestPoint(__instance.transform.position);
+                float distance = Vector2.Distance(closestPoint, __instance.transform.position);
+
+                if(distance <= maxDistance) {
+                    input.shieldWasPressed = true;
+                    break;
+                }
             }
         }
 

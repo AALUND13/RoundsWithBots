@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using InControl;
-using RoundsWithBots.Extensions;
 using RoundsWithBots.Menu;
 using UnboundLib;
 using UnityEngine;
