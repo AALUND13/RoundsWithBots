@@ -33,13 +33,13 @@ namespace RoundsWithBots.Menu {
             MenuHandler.CreateText("<b>Rounds With Bots | Stalemate Options", stalemateMenu, out TextMeshProUGUI _, 70);
             AddBlank(stalemateMenu, 50);
 
-            MenuHandler.CreateSlider("Stalemate Timer", stalemateMenu, 30, 0, 60, StalemateTimer.Value, value => StalemateTimer.Value = value, out UnityEngine.UI.Slider _, true);
+            MenuHandler.CreateSlider("Stalemate Timer", stalemateMenu, 30, 0, 60, StalemateTimer.Value, value => StalemateTimer.Value = value, out UnityEngine.UI.Slider _);
             AddBlank(stalemateMenu, 20);
 
-            MenuHandler.CreateSlider("Stalemate Damage Cooldown", stalemateMenu, 30, 0, 60, StalemateDamageCooldown.Value, value => StalemateDamageCooldown.Value = value, out UnityEngine.UI.Slider _, true);
+            MenuHandler.CreateSlider("Stalemate Damage Cooldown", stalemateMenu, 30, 0, 60, StalemateDamageCooldown.Value, value => StalemateDamageCooldown.Value = value, out UnityEngine.UI.Slider _);
             AddBlank(stalemateMenu, 20);
 
-            MenuHandler.CreateSlider("Stalemate Damage Duration", stalemateMenu, 30, 0, 60, StalemateDamageDuration.Value, value => StalemateDamageDuration.Value = value, out UnityEngine.UI.Slider _, true);
+            MenuHandler.CreateSlider("Stalemate Damage Duration", stalemateMenu, 30, 0, 60, StalemateDamageDuration.Value, value => StalemateDamageDuration.Value = value, out UnityEngine.UI.Slider _);
         }
     }
 }

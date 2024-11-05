@@ -18,6 +18,9 @@ Tired of waiting for friends in Rounds or don't have friends who own the game? T
 - **RoundsWithBots** mod is developed by [AALUND13](https://github.com/AALUND13) and [Tess-y (Root)](https://github.com/Tess-y).
 
 ### Changelog
+- **Version 3.0.1:**
+	- **Fixed Stalemate Config Slider:** Fixed the stalemate config slider to be non-whole numbers.
+	
 - **Version 3.0.0:**
 	- **Added Stalemate Handler:** If the player is dead for a set amount of time, the stalemate handler triggers, gradually killing the bots to end the round.
 	- **Prevented Bot Spawning During Ongoing Battles:** Bots are now restricted from spawning while a battle is in progress (minions can still spawn during battle).
