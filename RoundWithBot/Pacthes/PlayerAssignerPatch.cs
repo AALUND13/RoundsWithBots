@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace RoundsWithBots.Pacthes {
     [HarmonyPatch(typeof(PlayerAssigner))]
-    public class PlayerAssignerPatch {
+    internal class PlayerAssignerPatch {
         [HarmonyPatch("CreatePlayer")]
         public static bool Prefix(bool isAI, ref IEnumerator __result) {
             if(GameManager.instance.isPlaying && !AIMinionHandler.sandbox) {
@@ -32,8 +32,13 @@ namespace RoundsWithBots.Pacthes {
 
             MonoBehaviour playerAI = player.GetComponentInChildren<PlayerAI>() ?? (MonoBehaviour)player.GetComponentInChildren<PlayerAIZorro>();
             if(playerAI != null) {
+                if (playerAI is PlayerAIZorro playerAIZorro) {
+                    // Unsubscribe from delayed revive action to prevent the 'NullReferenceException: Object reference not set to an instance of an object' error
+                    player.data.healthHandler.delayedReviveAction -= playerAIZorro.Init;
+                }
+
                 playerAI.gameObject.AddComponent<PlayerAIPhilip>();
-                player.GetComponentInParent<CharacterData>().GetAdditionalData().IsBot = true;
+                player.data.GetAdditionalData().IsBot = true;
 
                 Object.Destroy(playerAI);
             }
