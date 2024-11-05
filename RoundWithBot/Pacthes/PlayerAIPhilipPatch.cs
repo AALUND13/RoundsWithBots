@@ -29,6 +29,8 @@ namespace RoundsWithBots.Patches {
             }
 
             foreach(var damageBoxCollider in DamageBoxesColliders) {
+                if(damageBoxCollider == null) continue;
+
                 Vector2 closestPoint = damageBoxCollider.bounds.ClosestPoint(__instance.transform.position);
                 float distance = Vector2.Distance(closestPoint, __instance.transform.position);
 

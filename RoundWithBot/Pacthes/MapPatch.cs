@@ -15,6 +15,7 @@ namespace RoundsWithBots.Pacthes {
 
         public static IEnumerator SetDamageBoxesColliders() {
             yield return null;
+
             List<DamageBox> damageBoxes = GameObject.FindObjectsOfType<DamageBox>().ToList();
             PlayerAIPhilipPatch.DamageBoxesColliders.Clear();
             foreach(DamageBox damageBox in damageBoxes) {
