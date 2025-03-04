@@ -45,8 +45,8 @@ namespace RoundsWithBots {
                             yield break;
                         }
 
-                        Player player = aliveBots[Random.Range(0, aliveBots.Length)];
-                        NetworkingManager.RPC(typeof(StalemateHandler), nameof(RPCA_SendTakeDamageOverTime), player.data.view.ControllerActorNr, player.playerID, player.data.maxHealth, RWBMenu.StalemateDamageDuration.Value);
+                        Player targetBot = aliveBots[Random.Range(0, aliveBots.Length)];
+                        NetworkingManager.RPC(typeof(StalemateHandler), nameof(RPCA_SendTakeDamageOverTime), targetBot.data.view.ControllerActorNr, targetBot.playerID, targetBot.data.maxHealth, RWBMenu.StalemateDamageDuration.Value);
                     }
                 }
                 yield break;

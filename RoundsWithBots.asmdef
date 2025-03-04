@@ -1,0 +1,26 @@
+{
+  "allowUnsafeCode": true,
+  "overrideReferences": true,
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "references": [
+    "UnboundLib",
+    "RoundsWithFriends",
+    "ModdingUtils",
+    "CardChoiceSpawnUniqueCardPatch",
+    "Unity.TextMeshPro"
+  ],
+  "optionalUnityReferences": [],
+  "precompiledReferences": [
+    "0Harmony.dll",
+    "BepInEx.dll",
+    "Assembly-CSharp.dll",
+    "InControl.dll",
+    "Photon3Unity3D.dll",
+    "PhotonRealtime.dll",
+    "PhotonUnityNetworking.dll"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "name": "RoundsWithBots"
+}
