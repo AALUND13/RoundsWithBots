@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f53b16b43f44db45911ff17aee4901d, type: 3}
+  m_Name: ModInfo
+  m_EditorClassIdentifier: 
+  ModName: RoundWithBots
+  Author: AALUND13
+  Version: 3.0.1
+  WebsiteURL: https://github.com/AALUND13/RoundsWithBots
+  Description: Tired of waiting for friends in Rounds or don't have friends who own
+    the game? The RoundWithBot mod solves this by allowing you to play with AI bots.
+    Simply press 'B' to activate the bot feature and 'R' to ready up, and enjoy Rounds
+    anytime!
+  BeforeBuildCommand: 
+  AfterBuildCommand: 
+  Dependencies:
+  - olavim-RoundsWithFriends-2.2.2
+  - Pykess-ModdingUtils-0.4.6
+  - Pykess-CardChoiceSpawnUniqueCardPatch-0.1.9
+  - willis81808-UnboundLib-3.2.10
+  DllDependencies: []
+  AssemblyDefinitionDependencies: []
+  IncludeInAllExports: 1

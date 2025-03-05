@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using RWF.UI;
 
-namespace RoundsWithBots.Pacthes.RWF {
+namespace RoundsWithBots.Patches.RWF {
     [HarmonyPatch(typeof(PlayerSpotlight))]
     internal class RWFAddSpotToPlayerPatch {
         [HarmonyPatch("AddSpotToPlayer")]

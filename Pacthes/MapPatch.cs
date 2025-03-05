@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace RoundsWithBots.Pacthes {
+namespace RoundsWithBots.Patches {
     [HarmonyPatch(typeof(Map))]
     internal class MapPatch {
         [HarmonyPatch("StartMatch")]

@@ -3,7 +3,7 @@ using RWF;
 using RWF.UI;
 using UnityEngine;
 
-namespace RoundsWithBots.Pacthes.RWF {
+namespace RoundsWithBots.Patches.RWF {
     [HarmonyPatch(typeof(KeybindHints))]
     internal class KeybindHintsPatch {
         [HarmonyPatch("CreateLocalHints")]

@@ -1,8 +1,10 @@
 ﻿using BepInEx;
+using CardChoiceSpawnUniqueCardPatch.CustomCategories;
 using HarmonyLib;
 using Photon.Pun;
 using RoundsWithBots.Menu;
 using RoundsWithBots.Utils;
+using System.Linq;
 using UnboundLib;
 using UnboundLib.Networking;
 using UnboundLib.Utils;
@@ -22,9 +24,14 @@ namespace RoundsWithBots {
         public const string ModInitials = "RWB";
 
         public static RoundsWithBots Instance { get; private set; }
+
         public bool IsPicking = false;
 
+        public AssetBundle Assets;
+
         void Awake() {
+            Assets = Jotunn.Utils.AssetUtils.LoadAssetBundleFromResources("rwb_assets", typeof(RoundsWithBots).Assembly);
+
             var harmony = new Harmony(ModId);
             harmony.PatchAll();
         }
@@ -35,11 +42,20 @@ namespace RoundsWithBots {
 
             Unbound.RegisterHandshake(ModId, OnHandShakeCompleted);
 
+            ModdingUtils.Utils.Cards.instance.AddCardValidationFunction((player, card) => {
+                if(player.GetComponent<PlayerAPI>().enabled
+                   && card.blacklistedCategories.Contains(CustomCardCategories.instance.CardCategory("NotForBots"))
+                ) return false;
+
+                return true;
+            });
+
             CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Remote"));
             CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Teleport"));
             CardExclusiveUtils.ExcludeCardsFromBots(CardManager.GetCardInfoWithName("Shield Charge"));
 
             BotAIManager.Instance = new GameObject($"{ModInitials}_BotAIManager").AddComponent<BotAIManager>();
+            DontDestroyOnLoad(BotAIManager.Instance.gameObject);
         }
 
         private void OnHandShakeCompleted() {

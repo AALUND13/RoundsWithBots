@@ -2,6 +2,7 @@
 using ModdingUtils.GameModes;
 using RoundsWithBots.Extensions;
 using RoundsWithBots.Utils;
+using RWF;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -79,10 +80,7 @@ namespace RoundsWithBots {
 
             // Just to be safe, we check if the game is still playing, after the delay.
             if(GameManager.instance.isPlaying) {
-                // Since the 'RoundEndHandler' is a internal class, we need to use 'AccessTools' to get the method.
-                Type type = AccessTools.TypeByName("RWF.RoundEndHandler");
-                object instance = type.GetField("instance", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-                type.GetMethod("OnGameOverChoose", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(instance, new object[] { "REMATCH" });
+                RoundEndHandler.instance.OnGameOverChoose("REMATCH");
             }
         }
     }

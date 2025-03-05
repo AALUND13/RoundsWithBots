@@ -7,7 +7,7 @@ using System.Linq;
 using UnboundLib;
 using UnityEngine;
 
-namespace RoundsWithBots.Pacthes {
+namespace RoundsWithBots.Patches {
     [HarmonyPatch(typeof(PlayerAssigner))]
     internal class PlayerAssignerPatch {
         [HarmonyPatch("CreatePlayer")]
