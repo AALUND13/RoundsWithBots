@@ -20,7 +20,7 @@ namespace RoundsWithBots {
     public class RoundsWithBots : BaseUnityPlugin {
         private const string ModId = "com.aalund13.rounds.roundswithbots";
         private const string ModName = "Rounds With Bots";
-        public const string Version = "2.3.0"; // What version are we on (major.minor.patch)?
+        public const string Version = "3.1.0"; // What version are we on (major.minor.patch)?
         public const string ModInitials = "RWB";
 
         public static RoundsWithBots Instance { get; private set; }

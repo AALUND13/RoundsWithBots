@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ModName: RoundWithBots
   Author: AALUND13
-  Version: 3.0.1
+  Version: 3.1.0
   WebsiteURL: https://github.com/AALUND13/RoundsWithBots
   Description: Tired of waiting for friends in Rounds or don't have friends who own
     the game? The RoundWithBot mod solves this by allowing you to play with AI bots.

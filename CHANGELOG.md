@@ -1,0 +1,13 @@
+- **Version 3.1.0:**
+  - **Bot Menu:** Added a menu called `Bot Menu`. This menu appears when you click on the `To Edit` text on bots.
+  - **Converted to Unity Project:** Converted project into unity project.
+- **Version 3.0.1:**
+  - **Fixed Stalemate Config Slider:** Fixed the stalemate config slider to be non-whole numbers.
+- **Version 3.0.0:**
+  - **Added Stalemate Handler:** If the player is dead for a set amount of time, the stalemate handler triggers, gradually killing the bots to end the round.
+  - **Prevented Bot Spawning During Ongoing Battles:** Bots are now restricted from spawning while a battle is in progress (minions can still spawn during battle).
+  - **Auto-Rematch for Bot-Only Games:** Automatically triggers a rematch at the end of each match when only bots are in the game.
+  - **Menu Improvements:** Enhanced the menu for better usability.
+  - **Bot AI Enhancements:** Improved bot behavior for more dynamic and challenging interactions.
+- **Version 2.3.0:**
+  - **Switched to `PlayerAIPhilip` Component:** Updated the bot AI to use the `PlayerAIPhilip` component instead of the `PlayerAI` component for improved functionality and performance.
