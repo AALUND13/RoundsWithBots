@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using Photon.Pun;
 using RoundsWithBots.CardPickerAIs;
+using RoundsWithBots.CardPickerAIs.Weighted.WeightedCardProcessesor;
+using RoundsWithBots.CardPickerAIs.Weighted;
 using RoundsWithBots.Menu;
 using RoundsWithBots.Utils;
 using System.Collections;
@@ -14,12 +16,12 @@ namespace RoundsWithBots {
 
     public partial class BotAIManager {
         public List<GameObject> GetSpawnCards() {
-            LoggingUtils.Log("Getting spawn cards");
+            LoggerUtils.Log("Getting spawn cards");
             return (List<GameObject>)AccessTools.Field(typeof(CardChoice), "spawnedCards").GetValue(CardChoice.instance);
         }
 
         public IEnumerator CycleThroughCards(float delay, List<GameObject> spawnedCards) {
-            LoggingUtils.Log("Cycling through cards");
+            LoggerUtils.Log("Cycling through cards");
 
             CardInfo lastCardInfo = null;
             int index = 0;
@@ -27,7 +29,7 @@ namespace RoundsWithBots {
             foreach(var cardObject in spawnedCards) {
                 CardInfo cardInfo = cardObject.GetComponent<CardInfo>();
 
-                LoggingUtils.Log($"Cycling through '${cardInfo.cardName}' card");
+                LoggerUtils.Log($"Cycling through '${cardInfo.cardName}' card");
                 if(lastCardInfo != null) {
                     lastCardInfo.RPCA_ChangeSelected(false);
                 }
@@ -38,11 +40,11 @@ namespace RoundsWithBots {
                 index++;
                 yield return new WaitForSeconds(delay);
             }
-            LoggingUtils.Log("Successfully gone through all cards");
+            LoggerUtils.Log("Successfully gone through all cards");
             yield break;
         }
         public IEnumerator GoToCards(GameObject selectedCards, List<GameObject> spawnedCards, float delay) {
-            LoggingUtils.Log($"Going to '${selectedCards}' card");
+            LoggerUtils.Log($"Going to '${selectedCards}' card");
 
             // Set currentlySelectedCard to the index of the selected card within the spawnedCards list
             int selectedCardIndex = spawnedCards.IndexOf(selectedCards);
@@ -51,7 +53,7 @@ namespace RoundsWithBots {
             while(handIndex != selectedCardIndex) {
                 CardInfo cardInfo = spawnedCards[handIndex].GetComponent<CardInfo>();
                 cardInfo.RPCA_ChangeSelected(false);
-                LoggingUtils.Log($"Currently on '${cardInfo}' card");
+                LoggerUtils.Log($"Currently on '${cardInfo}' card");
                 if(handIndex > selectedCardIndex) {
                     handIndex--;
                 } else if(handIndex < selectedCardIndex) {
@@ -64,7 +66,7 @@ namespace RoundsWithBots {
                 // Wait for some time before the next iteration
                 yield return new WaitForSeconds(delay);
             }
-            LoggingUtils.Log($"Successfully got to '${selectedCards}' card");
+            LoggerUtils.Log($"Successfully got to '${selectedCards}' card");
             yield break;
         }
 
@@ -83,7 +85,7 @@ namespace RoundsWithBots {
                 for(int i = 0; i < PlayerManager.instance.players.Count; i++) {
                     Player player = PlayerManager.instance.players[i];
                     if(PickerAIs.ContainsKey(CardChoice.instance.pickrID)) {
-                        LoggingUtils.Log("AI picking card");
+                        LoggerUtils.Log("AI picking card");
                         List<GameObject> spawnCards = GetSpawnCards();
                         spawnCards[0].GetComponent<CardInfo>().GetComponent<PhotonView>().RPC("RPCA_ChangeSelected", RpcTarget.All, true);
 
@@ -99,7 +101,7 @@ namespace RoundsWithBots {
 
         public void StartCardsPicking(List<GameObject> spawnCards, ICardPickerAI botCardPickerAI, PickerInfo pickerInfo) {
             if(botCardPickerAI == null) {
-                LoggingUtils.Log("Bot card picker AI is null, Skipping card picking");
+                LoggerUtils.Log("Bot card picker AI is null, Skipping card picking");
                 return;
             }
 
@@ -163,7 +165,7 @@ namespace RoundsWithBots {
         }
 
         public CardPickerAI() {
-            cardPickerAI = new RarestCardPicker();
+            cardPickerAI = new WeightedCardsPicker();
             pickerInfo = new PickerInfo();
         }
     }

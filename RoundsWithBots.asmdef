@@ -1,26 +1,28 @@
 {
-  "allowUnsafeCode": true,
-  "overrideReferences": true,
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "references": [
-    "UnboundLib",
-    "RoundsWithFriends",
-    "ModdingUtils",
-    "CardChoiceSpawnUniqueCardPatch",
-    "Unity.TextMeshPro"
-  ],
-  "optionalUnityReferences": [],
-  "precompiledReferences": [
-    "0Harmony.dll",
-    "BepInEx.dll",
-    "Assembly-CSharp.dll",
-    "InControl.dll",
-    "Photon3Unity3D.dll",
-    "PhotonRealtime.dll",
-    "PhotonUnityNetworking.dll"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "name": "RoundsWithBots"
+    "name": "RoundsWithBots",
+    "references": [
+        "UnboundLib",
+        "RoundsWithFriends",
+        "ModdingUtils",
+        "CardChoiceSpawnUniqueCardPatch",
+        "Unity.TextMeshPro",
+        "RarityLib",
+        "ClassesManagerReborn"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "0Harmony.dll",
+        "BepInEx.dll",
+        "Assembly-CSharp.dll",
+        "InControl.dll",
+        "Photon3Unity3D.dll",
+        "PhotonRealtime.dll",
+        "PhotonUnityNetworking.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": []
 }

@@ -1,7 +1,7 @@
 ﻿using RoundsWithBots.Menu;
 
 namespace RoundsWithBots.Utils {
-    public static class LoggingUtils {
+    public static class LoggerUtils {
         public static void Log(string message) {
             if(RWBMenu.DebugMode.Value) {
                 UnityEngine.Debug.Log(message);

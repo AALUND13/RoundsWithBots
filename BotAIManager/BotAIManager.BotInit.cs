@@ -1,13 +1,12 @@
-﻿using HarmonyLib;
-using ModdingUtils.GameModes;
+﻿using ModdingUtils.GameModes;
+using RoundsWithBots.CardPickerAIs.Weighted;
+using RoundsWithBots.CardPickerAIs.Weighted.WeightedCardProcessesor;
 using RoundsWithBots.Extensions;
 using RoundsWithBots.Utils;
 using RWF;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using TMPro;
 using UnboundLib.GameModes;
 using UnityEngine;
@@ -28,7 +27,7 @@ namespace RoundsWithBots {
         }
 
         public void SetBotsId() {
-            LoggingUtils.Log("Getting bots player.");
+            LoggerUtils.Log("Getting bots player.");
 
             PickerAIs.Clear();
             List<int> botsIds = PlayerManager.instance.players
@@ -37,9 +36,13 @@ namespace RoundsWithBots {
                      .ToList();
 
             PickerAIs = botsIds.ToDictionary(id => id, id => new CardPickerAI());
+            if(PickerAIs.Count > 1) {
+                // So we can do the "old vs new" card picking AI to see which one is better.
+                PickerAIs[0].cardPickerAI = new WeightedCardsPicker();
+            }
 
-            botsIds.ForEach(id => LoggingUtils.Log($"Bot '{id}' has been added to the list of bots id."));
-            LoggingUtils.Log("Successfully get list of bots player.");
+            botsIds.ForEach(id => LoggerUtils.Log($"Bot '{id}' has been added to the list of bots id."));
+            LoggerUtils.Log("Successfully get list of bots player.");
         }
 
         public void OnPlayerPickStart() {
@@ -66,7 +69,7 @@ namespace RoundsWithBots {
             int maxRounds = (int)GameModeManager.CurrentHandler.Settings["roundsToWinGame"];
             var teams = PlayerManager.instance.players.Select(p => p.teamID).Distinct();
             int? winnerTeam = teams.Select(id => (int?)id).FirstOrDefault(id => GameModeManager.CurrentHandler.GetTeamScore(id.Value).rounds >= maxRounds);
-        
+
             bool isAllBot = PlayerManager.instance.players.All(p => p.data.GetAdditionalData().IsBot
                 || ModdingUtils.AIMinion.Extensions.CharacterDataExtension.GetAdditionalData(p.data).isAIMinion);
 

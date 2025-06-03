@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace RoundsWithBots.UI {
     internal class BotMenuUIHandler : MonoBehaviour {
-        public static GameObject Prefab = RoundsWithBots.Instance.Assets?.LoadAsset<GameObject>("BotMenu");
+        public static GameObject Prefab = RoundsWithBots.Instance?.Assets?.LoadAsset<GameObject>("BotMenu");
         public static GameObject CurrentInstance;
 
         public GameObject MenuObject;
