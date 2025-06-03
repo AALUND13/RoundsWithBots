@@ -18,6 +18,8 @@ namespace RoundsWithBots {
     [BepInDependency("pykess.rounds.plugins.moddingutils", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("pykess.rounds.plugins.cardchoicespawnuniquecardpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("io.olavim.rounds.rwf", BepInDependency.DependencyFlags.HardDependency)]
+    
+    [BepInDependency("root.classes.manager.reborn", BepInDependency.DependencyFlags.SoftDependency)]
 
     [BepInPlugin(ModId, ModName, Version), BepInProcess("Rounds.exe")]
     public class RoundsWithBots : BaseUnityPlugin {
