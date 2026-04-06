@@ -2,6 +2,7 @@
 using RoundsWithBots.CardPickerAIs.Weighted;
 using RoundsWithBots.CardPickerAIs.Weighted.WeightedCardProcessesor;
 using RoundsWithBots.Extensions;
+using RoundsWithBots.Mods.Interfaces;
 using RoundsWithBots.Utils;
 using RWF;
 using System.Collections;
@@ -12,7 +13,7 @@ using UnboundLib.GameModes;
 using UnityEngine;
 
 namespace RoundsWithBots {
-    public partial class BotAIManager : MonoBehaviour, IPlayerPickStartHookHandler, IGameStartHookHandler, IPointStartHookHandler, IRoundEndHookHandler {
+    public partial class BotAIManager : MonoBehaviour, IGameStartHookHandler, IPointStartHookHandler, IRoundEndHookHandler {
         public static BotAIManager Instance;
 
         public Dictionary<int, CardPickerAI> PickerAIs = new Dictionary<int, CardPickerAI>();
@@ -43,10 +44,17 @@ namespace RoundsWithBots {
 
             botsIds.ForEach(id => LoggerUtils.Log($"Bot '{id}' has been added to the list of bots id."));
             LoggerUtils.Log("Successfully get list of bots player.");
+
+            if(RoundsWithBots.Plugins.Any(plugin => plugin.Info.Metadata.GUID == "Systems.R00t.PickPhaseImprovements")) {
+                PickPhaseImprovementsInterrface.RegisterHandFinalizationAction((_) => StartCoroutine(Instance.AiPickCard()));
+            } else {
+                GameModeManager.AddHook(GameModeHooks.HookPlayerPickStart, OnPlayerPickStart);
+            }
         }
 
-        public void OnPlayerPickStart() {
+        public IEnumerator OnPlayerPickStart(IGameModeHandler modeHandler) {
             StartCoroutine(Instance.AiPickCard());
+            yield break;
         }
 
         public void OnGameStart() {
