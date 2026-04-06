@@ -18,14 +18,14 @@ namespace RoundsWithBots {
     [BepInDependency("pykess.rounds.plugins.moddingutils", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("pykess.rounds.plugins.cardchoicespawnuniquecardpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("io.olavim.rounds.rwf", BepInDependency.DependencyFlags.HardDependency)]
-    
+
     [BepInDependency("root.classes.manager.reborn", BepInDependency.DependencyFlags.SoftDependency)]
 
     [BepInPlugin(ModId, ModName, Version), BepInProcess("Rounds.exe")]
     public class RoundsWithBots : BaseUnityPlugin {
         private const string ModId = "com.aalund13.rounds.roundswithbots";
         private const string ModName = "Rounds With Bots";
-        public const string Version = "3.2.0"; // What version are we on (major.minor.patch)?
+        public const string Version = "3.2.1"; // What version are we on (major.minor.patch)?
         public const string ModInitials = "RWB";
 
         internal static List<BaseUnityPlugin> Plugins { get; private set; }
@@ -44,7 +44,6 @@ namespace RoundsWithBots {
 
             var harmony = new Harmony(ModId);
             harmony.PatchAll();
-
         }
         void Start() {
             Plugins = (List<BaseUnityPlugin>)typeof(BepInEx.Bootstrap.Chainloader).GetField("_plugins", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
