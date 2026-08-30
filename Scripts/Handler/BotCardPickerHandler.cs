@@ -66,7 +66,6 @@ namespace RoundsWithBots.Handlers {
             set => AccessTools.Field(typeof(CardChoice), "currentlySelectedCard").SetValue(CardChoice.instance, value);
         }
 
-        private bool pickerAIPicking = false;
         private CardPickerAI PickerAI;
 
 
@@ -79,27 +78,56 @@ namespace RoundsWithBots.Handlers {
             }
 
             if (RoundsWithBots.Plugins.Any(plugin => plugin.Info.Metadata.GUID == "Systems.R00t.PickPhaseImprovements")) {
-                PickPhaseImprovementsInterrface.RegisterHandFinalizationAction((_) => StartCoroutine(AiPickCard()));
+                LoggerUtils.Log(LogLevel.Info, "PickPhaseImprovements have been detected, using PickPhaseImprovements \"RegisterHandFinalizationAction\"");
+                PickPhaseImprovementsInterrface.RegisterHandFinalizationAction((_) => {
+                    LoggerUtils.Log(LogLevel.Debug, "\"HandFinalizationAction\" have been trigger, calling the \"AIPickCard\" method");
+                    StartCoroutine(AiPickCard());
+                });
             } else {
+                LoggerUtils.Log(LogLevel.Info, "PickPhaseImprovements have NOT been detected, adding \"HookPlayerPickStart\" hook");
                 GameModeManager.AddHook(GameModeHooks.HookPlayerPickStart, PlayerPickStart);
             }
+
             GameModeManager.AddHook(GameModeHooks.HookGameStart, OnGameStart);
         }
 
 
         private IEnumerator OnGameStart(IGameModeHandler gameModeHandler) {
-            pickerAIPicking = false;
             PickerAI = new CardPickerAI();
+
+            LoggerUtils.Log(LogLevel.Debug, "Reset the AI pickers system");
             yield break;
         }
 
         private IEnumerator PlayerPickStart(IGameModeHandler gameModeHandler) {
+            LoggerUtils.Log(LogLevel.Debug, "Hook have been trigger, calling the \"AIPickCard\" method");
             StartCoroutine(Instance.AiPickCard());
             yield break;
         }
 
 
+        private IEnumerator AiPickCard() {
+            if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode) {
+                yield return new WaitUntil(() => {
+                    return CardChoice.instance.IsPicking && SpawnedCard.Count == Children.Length && !SpawnedCard.Any(card => { return card == null; });
+                }); //wait untill all the cards are generated
+
+                LoggerUtils.Log(LogLevel.Debug, $"Checking if the player with the id of \'{CardChoice.instance.pickrID}\' is a bot");
+                bool isPlayerBot = BotsManager.Instance.BotList.Any(b => b.playerID == CardChoice.instance.pickrID);
+
+                if (isPlayerBot) {
+                    LoggerUtils.Log(LogLevel.Debug, "Player is a bot, using the AI picker");
+
+                    SpawnedCard[0].GetComponent<CardInfo>().GetComponent<PhotonView>().RPC("RPCA_ChangeSelected", RpcTarget.All, true);
+                    StartCardsPicking(SpawnedCard, PickerAI.cardPickerAI, PickerAI.pickerInfo);
+                }
+
+                yield break;
+            }
+        }
+
         private IEnumerator CycleThroughCards(float delay, List<GameObject> spawnedCards) {
+            LoggerUtils.Log(LogLevel.Info, $"Cycling throught {spawnedCards.Count} cards in hand");
             CardInfo lastCardInfo = null;
 
             for (int i = 0; i < spawnedCards.Count; i++) {
@@ -112,6 +140,7 @@ namespace RoundsWithBots.Handlers {
                 lastCardInfo = cardInfo;
                 CurrentSelectedCard = i;
 
+                LoggerUtils.Log(LogLevel.Debug, $"Currently at card \"{cardInfo.name}\" in hand");
                 yield return new WaitForSeconds(delay);
             }
 
@@ -119,6 +148,7 @@ namespace RoundsWithBots.Handlers {
         }
 
         private IEnumerator GoToCards(GameObject selectedCards, List<GameObject> spawnedCards, float delay) {
+            LoggerUtils.Log(LogLevel.Info, $"Going to selected card \"{selectedCards.name}\" in hand");
             int selectedCardIndex = spawnedCards.IndexOf(selectedCards);
 
             while (CurrentSelectedCard != selectedCardIndex) {
@@ -133,38 +163,15 @@ namespace RoundsWithBots.Handlers {
                 cardInfo = spawnedCards[CurrentSelectedCard].GetComponent<CardInfo>();
                 cardInfo.RPCA_ChangeSelected(true);
 
+                LoggerUtils.Log(LogLevel.Debug, $"Currently at card \"{cardInfo.name}\" in hand");
                 yield return new WaitForSeconds(delay);
             }
             yield break;
         }
 
         private void PickCard() {
-            pickerAIPicking = false;
             CardChoice.instance.Pick(SpawnedCard[CurrentSelectedCard], true);
-        }
-
-        private IEnumerator AiPickCard() {
-            if ((PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode) && !pickerAIPicking) {
-                if (BotsManager.Instance.BotList.Any(b => b.playerID == CardChoice.instance.pickrID)) {
-                    pickerAIPicking = true;
-                }
-
-                yield return new WaitUntil(() => {
-                    return CardChoice.instance.IsPicking && SpawnedCard.Count == Children.Length && !SpawnedCard.Any(card => { return card == null; });
-                }); //wait untill all the cards are generated
-
-                for (int i = 0; i < PlayerManager.instance.players.Count; i++) {
-                    Player player = PlayerManager.instance.players[i];
-                    if (pickerAIPicking == true) {
-                        SpawnedCard[0].GetComponent<CardInfo>().GetComponent<PhotonView>().RPC("RPCA_ChangeSelected", RpcTarget.All, true);
-
-                        StartCardsPicking(SpawnedCard, PickerAI.cardPickerAI, PickerAI.pickerInfo);
-                        break;
-                    }
-                }
-
-                yield break;
-            }
+            LoggerUtils.Log(LogLevel.Info, $"AI picker have picked the card \"{SpawnedCard[CurrentSelectedCard]}\"");
         }
 
         private void StartCardsPicking(List<GameObject> spawnCards, ICardPickerAI botCardPickerAI, PickerInfo pickerInfo) {
