@@ -27,7 +27,7 @@ namespace RoundsWithBots {
     public class RoundsWithBots : BaseUnityPlugin {
         private const string ModId = "com.aalund13.rounds.roundswithbots";
         private const string ModName = "Rounds With Bots";
-        public const string Version = "4.0.0"; // What version are we on (major.minor.patch)?
+        public const string Version = "4.0.1"; // What version are we on (major.minor.patch)?
         public const string ModInitials = "RWB";
 
         internal static List<BaseUnityPlugin> Plugins { get; private set; }

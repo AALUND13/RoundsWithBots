@@ -1,3 +1,8 @@
+# Changes Logs v4.0.1
+## Fixes
+- Fixed the bug when the mod "PickPhaseImprovements" not installed, the AI picker system won't work.
+- Skip aim calculation when target is invalid to reduce lags. 
+
 # Changes Logs v4.0.0
 Note: The main feature of this update is the new **Custom** ai system, that uses a **Pathfinding** system to get to the players more reliably.
 
