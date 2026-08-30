@@ -25,7 +25,6 @@ namespace RoundsWithBots.Patches {
         }
 
         [HarmonyPatch("CreatePlayer", MethodType.Enumerator)]
-        [HarmonyDebug]
         private static IEnumerable<CodeInstruction> Transpiler(
             IEnumerable<CodeInstruction> instructions,
             ILGenerator il
